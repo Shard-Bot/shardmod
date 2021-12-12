@@ -1,46 +1,47 @@
-import { Command, CommandClient} from 'detritus-client';
-import { Permissions } from 'detritus-client/lib/constants';
-import {inspect} from 'util';
-import config from '../../../../config.json';
+import { Command, CommandClient } from 'detritus-client';
+import { inspect } from 'util';
 import { BaseCommand } from '../basecommand';
+import config from '../../../../config.json';
 
+export const COMMAND_NAME = 'eval'
 
-export const COMMAND_NAME = 'eval';
-type eval = {
-  eval: string
+interface Args {
+  eval: string;
 }
+
 export default class EvalCommand extends BaseCommand {
-	constructor(client: CommandClient) {
+  constructor(client: CommandClient) {
     super(client, {
       name: COMMAND_NAME,
       aliases: ['ev'],
       metadata: {
-        description: 'si',
+        description: 'Ejecuta un código',
         examples: [
-          COMMAND_NAME
+          `${COMMAND_NAME} this`
         ],
         type: 'owner',
-      },
-      permissionsClient: [Permissions.EMBED_LINKS],
+      }
     });
   }
 
-  onBeforeRun(context: Command.Context, args:eval|undefined) {
-    return !!config.devsIds.includes(context.userId)
-  }
-  onCancelRun(context: Command.Context, args:eval|undefined) {
-    return context.editOrReply( '⚠ Owner Only Command.');
+  onBeforeRun(context: Command.Context) {
+    return config.devsIds.includes(context.userId)
   }
 
-  async run(context: Command.Context, args:eval|undefined) {
-    if(!args?.eval) return context.reply('Escribe un codigo')
-  try{
+  onCancelRun(context: Command.Context) {
+    return context.editOrReply('Exclusivo para desarrolladores');
+  }
+
+  async run(context: Command.Context, args: Args) {
+    if (!args?.eval) return context.reply('Escribe un código')
+
+    try {
       const evaled = eval(args.eval)
-        context.editOrReply({content: `**Tipo**: \`\`\`prolog\n${typeof(evaled)}\`\`\`\n**Resultado:**\`\`\`js\n${inspect(evaled, {depth: 0})}\`\`\``})
-        console.log(`${inspect(evaled, {depth: 0})}`)
+      context.editOrReply({ content: `**Tipo**: \`\`\`prolog\n${typeof (evaled)}\`\`\`\n**Resultado:**\`\`\`js\n${inspect(evaled, { depth: 0 })}\`\`\`` })
+      console.dir(evaled, { depth: 0 })
     } catch (error) {
       console.log(error)
-        context.editOrReply({content: `**Resultado:**\`\`\`js\n${error}\`\`\``})
+      context.editOrReply({ content: `**Resultado:**\`\`\`js\n${error}\`\`\`` })
     }
   }
 }
