@@ -1,16 +1,15 @@
 {
-  "name": "typescript",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "ts-node index.ts"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "detritus-client": "^0.16.4-beta.6",
-    "eris": "github:DonovanDMC/eris#everything"
-  }
+	"name": "shardmod",
+	"version": "1.0.0",
+	"description": "Bot de moderación en beta",
+	"main": "lib/bot.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"run": "ts-node src/bot.ts"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"detritus-client": "^0.16.4-beta.6"
+	}
 }
