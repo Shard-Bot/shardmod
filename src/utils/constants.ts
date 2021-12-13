@@ -1,6 +1,8 @@
 import {
   UserFlags as DiscordUserFlags,
-  Permissions
+  Permissions,
+  GuildExplicitContentFilterTypes,
+  VerificationLevels
 } from 'detritus-client/lib/constants';
 
 
@@ -106,4 +108,19 @@ export const PermissionsText = Object.freeze({
   [String(Permissions.VIEW_AUDIT_LOG)]: 'View Audit Logs',
   [String(Permissions.VIEW_CHANNEL)]: 'View Channel',
   [String(Permissions.VIEW_GUILD_ANALYTICS)]: 'View Guild Analytics',
+});
+
+
+export const GuildContentFilterTypes = Object.freeze({
+  [GuildExplicitContentFilterTypes.DISABLED]: 'Desactivado',
+  [GuildExplicitContentFilterTypes.MEMBERS_WITHOUT_ROLES]: 'Usuarios sin roles',
+  [GuildExplicitContentFilterTypes.ALL_MEMBERS]: 'Todos',
+})
+
+export const VerificationLevel: Record<string, string> = Object.freeze({
+  [VerificationLevels.NONE]: 'Desactivado',
+  [VerificationLevels.LOW]: 'Bajo',
+  [VerificationLevels.MEDIUM]: 'Medio',
+  [VerificationLevels.HIGH]: 'Alto',
+  [VerificationLevels.VERY_HIGH]: 'Muy Alto',
 });
