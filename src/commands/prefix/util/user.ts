@@ -145,7 +145,7 @@ export default class MemberCommand extends BaseCommand {
     `
          );
       } else {
-         embed.setFooter(`${user.name} No esta en este servidor!`);
+        if(guild) embed.setFooter(`${user.name} No esta en este servidor!`)
       }
 
       return context.editOrReply({ embeds: [embed] });
