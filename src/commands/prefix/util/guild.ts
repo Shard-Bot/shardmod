@@ -10,6 +10,7 @@ import {
    GuildContentFilterTypes,
    VerificationLevel,
 } from '../../../utils/constants';
+import { clearString } from '../../../utils/functions';
 
 export const COMMAND_NAME = 'server';
 export default class ServerCommand extends BaseCommand {
@@ -54,7 +55,7 @@ export default class ServerCommand extends BaseCommand {
             guild.premiumTier ? `Nivel ${guild.premiumTier}` : 'Nivel 0'
          }
      `,
-         true
+         false
       );
 
       //canales establecidos a lo dou
@@ -70,38 +71,69 @@ export default class ServerCommand extends BaseCommand {
        **Sistema:** ${guild.systemChannelId ? `<#${guild.systemChannelId}>` : 'Sin Establecer'}
        **Widget:** ${guild.widgetChannelId ? `<#${guild.widgetChannelId}>` : 'Sin Establecer'}
       `,
-      true
+         true
       );
-      //field vacio claro que si
-      embed.addField('_ _', '_ _', false)
-      
-      //imagenes y footer lol
-      if (guild.features.length) {
-         embed.addField('Características', `\`\`\`${guild.features.join('\n')}\`\`\``, true);
-      }
 
-       //field de opciones de Moderación
+      //field de opciones de Moderación
       embed.addField(
          '**Moderación**',
          `
-       **MFA**: ${guild.mfaLevel ? 'Requerido' : 'Opcional'}
-       **Notificaciones**: ${guild.defaultMessageNotifications ? 'Menciones' : 'Todas'}
+       **MFA:** ${guild.mfaLevel ? 'Requerido' : 'Opcional'}
+       **Notificaciones:** ${guild.defaultMessageNotifications ? 'Menciones' : 'Todas'}
        **AFK Timeout:** ${guild.afkTimeout} segundos
-       **Filtros de Contenido**: ${
+       **Filtros de Contenido:** ${
           GuildContentFilterTypes[guild.explicitContentFilter] || 'Desconocido'
        }
-       **Verificación**: ${VerificationLevel[guild.verificationLevel] || 'Desconocido'}
+       **Verificación:** ${VerificationLevel[guild.verificationLevel] || 'Desconocido'}
       `,
-      true
+         true
+      );
+      let channelsBase = guild.channels;
+      let textchannels = channelsBase.filter((channel) => channel.type === 0);
+      let voicechannels = channelsBase.filter((channel) => channel.type === 2);
+      let newschannels = channelsBase.filter((channel) => channel.type === 5);
+      let emojisBase = guild.emojis;
+      let animated = emojisBase.filter((emoji) => emoji.animated);
+      let normal = emojisBase.filter((emoji) => !emoji.animated);
+      //embed vacio claro q si
+      embed.addField('\u200B', '\u200B', false);
+
+      embed.addField(
+         '**Características**',
+         `\`\`\`${guild.features
+            .toArray()
+            .sort()
+            .map((feature: string) => clearString(feature))
+            .join(', ')}\`\`\``,
+         true
       );
 
+      embed.addField(
+         '**Proiedades**',
+         `\`\`\`js\nCanales: ${channelsBase.size}\n• Texto: ${textchannels.length}\n• Voz: ${voicechannels.length}\n• Anuncios: ${newschannels.length}\nEmojis: ${emojisBase.size}\n• Animados ${animated.length}\n• Estaticos: ${normal.length}\nStickers: ${guild.stickers.size}\nRoles: ${guild.roles.size}\`\`\``,
+         true
+      );
+      //imagenes y footer lol
+      let URLS = [];
       if (guild.banner) {
-         embed.setImage(`${guild.bannerUrlFormat(null, { size: 1024 })}`);
+         embed.setImage(`${guild.bannerUrlFormat(null, { size: 256 })}`);
+         URLS.push({ name: 'BANNER', URL: `${guild.bannerUrlFormat(null, { size: 4096 })}` });
       }
       if (guild.splash) {
          embed.setThumbnail(`${guild.splashUrlFormat(null, { size: 1024 })}`);
+         URLS.push({ name: 'SPLASH', URL: `${guild.splashUrlFormat(null, { size: 4096 })}` });
       } else if (guild.icon) {
          embed.setThumbnail(`${guild.iconUrlFormat(null, { size: 1024 })}`);
+      }
+
+      if (guild.icon) {
+         URLS.push({ name: 'ICON', URL: `${guild.iconUrlFormat(null, { size: 4096 })}` });
+      }
+      if (URLS.length) {
+         embed.addField(
+            '\u200B',
+            `**Full URLS: ${URLS.map((item) => `[${item.name}](${item.URL})`).join(' ')}**`
+         );
       }
       embed.setFooter(`Server ShardID: ${guild.shardId}`);
       return context.editOrReply({ embeds: [embed] });
