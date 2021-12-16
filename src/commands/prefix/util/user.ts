@@ -32,9 +32,9 @@ export default class MemberCommand extends BaseCommand {
       let { guild, message } = context;
 
       let User =
-         (message.mentions.first() as Structures.Member) || args.user
+         (message.mentions.first() as Structures.Member) || (args.user
             ? await getUserByText(context, args.user)
-            : undefined || context.member || context.user;
+            : undefined) || context.member || context.user;
       if (!User) return context.editOrReply('⚠ | No pude encontrar el usuario');
       const isMember = User instanceof Structures.Member;
       const member = User as Structures.Member;
