@@ -10,6 +10,7 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"detritus-client": "^0.16.4-beta.6"
+		"detritus-client": "^0.16.4-beta.6",
+		"mongoose": "^6.1.2"
 	}
 }
