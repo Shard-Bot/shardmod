@@ -1,5 +1,6 @@
 import { Command } from 'detritus-client';
 import { Embed, Markup } from 'detritus-client/lib/utils';
+import { EmbedColors } from '../../utils/constants';
 
 export class BaseCommand<ParsedArgsFinished = Command.ParsedArgs> extends Command.Command<ParsedArgsFinished> {
   permissionsIgnoreClientOwner = true;
@@ -33,7 +34,7 @@ export class BaseCommand<ParsedArgsFinished = Command.ParsedArgs> extends Comman
 
     const store: { [key: string]: string } = {};
 
-    const description: Array<string> = ['Argumentos inválidos:' + '\n'];
+    const description: Array<string> = ['Argumentos inválidos:'];
     for (const key in errors) {
       const message = errors[key].message;
       if (message in store) {
@@ -43,7 +44,7 @@ export class BaseCommand<ParsedArgsFinished = Command.ParsedArgs> extends Comman
       }
       store[message] = key;
     }
-
+    embed.setColor(EmbedColors.ERROR)
     embed.setDescription(description.join('\n'));
 
     return context.editOrReply({ embed });
