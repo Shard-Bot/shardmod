@@ -1,6 +1,7 @@
 import config from '../config.json'
 import { InteractionCommandClient, CommandClient, ShardClient } from 'detritus-client';
 import { ClientEvents, PresenceStatuses } from 'detritus-client/lib/constants';
+import mongoose from 'mongoose';
 
 const Client = new ShardClient(config.token, {
   cache: { messages: { expire: 60 * 60 * 1000 } },
@@ -14,6 +15,11 @@ const Client = new ShardClient(config.token, {
 });
 
 (async () => {
+
+  await mongoose.connect(config.mongoURL)
+  .then(db =>  console.log("ShardDB Conectado")) 
+  .catch(err => console.error(err))
+
   Client.on(ClientEvents.REST_RESPONSE, async ({ response, restRequest }) => {
     const { route } = response.request;
 
