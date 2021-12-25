@@ -1,6 +1,7 @@
 import { Command, Interaction, Structures } from 'detritus-client';
 import { DiscordAbortCodes, Permissions} from 'detritus-client/lib/constants';
 import { PermissionTools} from 'detritus-client/lib/utils';
+import { DiscordRegex } from 'detritus-client/lib/constants'
 
 export function isSnowflake(value: string): boolean {
   if (![16, 17, 18].includes(value.length) || isNaN(parseInt(value))) {
@@ -61,6 +62,38 @@ export async function getUserByText(context: Command.Context, text: string) {
       )
 
     return member ?? null
+  }
+
+  return null
+}
+
+export async function getGuildChannel(context: Command.Context, text: string) {
+  const { guild } = context;
+  if (guild) {
+    if(text.match(DiscordRegex.MENTION_CHANNEL)){
+      const channel = guild.channels.get(text.replace(/(<#|>)/gi, ""))
+      if(channel) return channel;
+    }
+    const channel = guild.channels.get(text) ||
+      guild.channels.find(channel =>
+        (channel.name.toLowerCase().includes(text.toLowerCase()))
+      )
+
+    return channel ?? null
+  }
+
+  return null
+}
+
+export async function getGuildRole(context: Command.Context, text: string) {
+  const { guild } = context;
+  if (guild) {
+    const role = guild.roles.get(text) ||
+      guild.roles.find(role =>
+        (role.name.toLowerCase().includes(text.toLowerCase()))
+      )
+
+    return role ?? null
   }
 
   return null
