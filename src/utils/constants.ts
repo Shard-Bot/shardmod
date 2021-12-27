@@ -20,7 +20,10 @@ export const DiscordEmojis = Object.freeze({
     [DiscordUserFlags.VERIFIED_DEVELOPER]: '<:early_dev:907037746340712468>',
     [DiscordUserFlags.DISCORD_CERTIFIED_MODERATOR]: '<:certified_moderator:919478567157501983>',
   },
-  NITRO: '<:discord_nitro:919480571330183198>'
+  NITRO: '<:discord_nitro:919480571330183198>',
+  NEXT: '<:next:925098720045973505>',
+  PREVIOUS: '<:previous:925098782767603714>',
+  CANCEL: '<:cancel:925098803621687426>'
 });
 
 export const EmbedColors = Object.freeze({
