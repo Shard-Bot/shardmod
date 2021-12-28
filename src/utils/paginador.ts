@@ -42,6 +42,8 @@ export async function paginate(
    const subscription = context.client.subscribe(
       ClientEvents.INTERACTION_CREATE,
       async (payload: GatewayClientEvents.InteractionCreate) => {
+        if(!payload.interaction.isFromMessageComponent) return;
+        if(payload.interaction.message?.id !== mainEmbed.id) return;
          if (!targets.includes(payload.interaction.userId))
             return payload.interaction.editOrRespond({
                content: 'Esta no es tu interacción',
