@@ -1,18 +1,9 @@
 import config from '../config.json'
-import { InteractionCommandClient, CommandClient, ShardClient } from 'detritus-client';
+import { InteractionCommandClient, CommandClient, ShardClient, Command } from 'detritus-client';
 import { ClientEvents, PresenceStatuses } from 'detritus-client/lib/constants';
 import mongoose from 'mongoose';
-
-const Client = new ShardClient(config.token, {
-  cache: { messages: { expire: 60 * 60 * 1000 } },
-  gateway: {
-    compress: false,
-    intents: 'ALL',
-    presence: {
-      status: PresenceStatuses.ONLINE,
-    },
-  },
-});
+import Client from './client';
+import './cache/index';
 
 (async () => {
 

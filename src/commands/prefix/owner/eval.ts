@@ -1,7 +1,7 @@
 import { Command, CommandClient } from 'detritus-client';
 import { BaseCommand } from '../basecommand';
 import config from '../../../../config.json';
-
+import { Markup } from 'detritus-client/lib/utils';
 export const COMMAND_NAME = 'eval';
 interface commandArgs {
 	eval: string;
@@ -49,6 +49,6 @@ export default class EvalCommand extends BaseCommand {
 		} catch (error: any) {
 			message = error ? error.stack || error.message : error;
 		}
-		return context.editOrReply(`\`\`\`${type || 'js'}\n${String(message)}\`\`\``);
+		return context.editOrReply(Markup.codeblock(String(message), { language: `${type || 'js'}`}));
 	}
 }
