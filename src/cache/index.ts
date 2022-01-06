@@ -1,1 +1,0 @@
-export { cacheClass } from './cacheCollection';

@@ -1,5 +1,5 @@
-import { InteractionCommandClient, CommandClient, ShardClient } from 'detritus-client';
-import { ClientEvents, PresenceStatuses } from 'detritus-client/lib/constants';
+import { ShardClient } from 'detritus-client';
+import { PresenceStatuses } from 'detritus-client/lib/constants';
 import config from '../config.json';
 
 export default new ShardClient(config.token, {

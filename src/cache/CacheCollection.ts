@@ -6,14 +6,11 @@ import Client from '../client';
 import { ClientEvents } from 'detritus-client/lib/constants';
 import { ServerConfig } from '../utils/types';
 import { createData } from '../utils/functions';
+import { autoInjectable, container } from 'tsyringe';
 
+@autoInjectable()
 export class cacheClass extends Collections.BaseCollection<any, ServerConfig> {
-	client: ShardClient;
-	constructor(client: ShardClient) {
-		super();
-		this.client = client;
-		this.client.on(ClientEvents.GATEWAY_READY, () => this.loadAll())
-	}
+	client = Client;
 	async loadAll() {
 		console.log('Cargando Cache');
 
@@ -21,7 +18,7 @@ export class cacheClass extends Collections.BaseCollection<any, ServerConfig> {
 		const start = Date.now();
 		const data = await Model.find().lean();
 
-		for (const config of data) {
+		for (const config of data.filter((c) => guilds.map(g => g.id).includes(c.ServerID))) {
 			this.set(config.ServerID, config);
 		}
 
@@ -38,4 +35,4 @@ export class cacheClass extends Collections.BaseCollection<any, ServerConfig> {
 	}
 }
 
-export default new cacheClass(Client);
+export default container.resolve(cacheClass);

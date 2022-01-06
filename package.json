@@ -11,6 +11,8 @@
 	"license": "ISC",
 	"dependencies": {
 		"detritus-client": "^0.16.4-beta.6",
-		"mongoose": "^6.1.2"
+		"mongoose": "^6.1.2",
+		"reflect-metadata": "^0.1.13",
+		"tsyringe": "^4.6.0"
 	}
 }

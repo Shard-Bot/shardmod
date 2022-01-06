@@ -1,9 +1,10 @@
 import config from '../config.json'
-import { InteractionCommandClient, CommandClient, ShardClient, Command } from 'detritus-client';
-import { ClientEvents, PresenceStatuses } from 'detritus-client/lib/constants';
+import { InteractionCommandClient, CommandClient } from 'detritus-client';
+import { ClientEvents } from 'detritus-client/lib/constants';
 import mongoose from 'mongoose';
 import Client from './client';
-import './cache/index';
+import 'reflect-metadata';
+import CacheCollection from './cache/CacheCollection';
 
 (async () => {
 
@@ -11,7 +12,9 @@ import './cache/index';
     .then(() => console.log("ShardDB Conectado"))
     .catch(console.error)
 
-  Client.on(ClientEvents.REST_RESPONSE, async ({ response, restRequest }) => {
+  Client.on(ClientEvents.GATEWAY_READY, () => CacheCollection.loadAll())
+
+  Client.on(ClientEvents.REST_RESPONSE, async ({ response }) => {
     const { route } = response.request;
 
     if (route) {
