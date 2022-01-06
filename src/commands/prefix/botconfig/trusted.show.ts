@@ -24,7 +24,7 @@ export default class TrustedShowCommand extends BaseCommand {
       });
    }
    async run(context: Command.Context) {
-      const document = await Model.findOne({ ServerID: context.guildId });
+      const document = (await Model.findOne({ ServerID: context.guildId }))!;
       if (!document.Users.Trusted.length)
          return context.editOrReply('ℹ️ | No hay usuarios en la base de datos');
 
@@ -32,7 +32,7 @@ export default class TrustedShowCommand extends BaseCommand {
       embed.setTitle(`TRUSTEDS: (${document.Users.Trusted.length}/5)`);
       embed.setColor(EmbedColors.MAIN);
       embed.setDescription(
-         document.Users.Trusted.map((user:string, i:number) => `**${i + 1}** • <@${user}>`).join('\n')
+         document.Users.Trusted.map((user: string, i: number) => `**${i + 1}** • <@${user}>`).join('\n')
       );
       context.editOrReply({ embeds: [embed] });
    }

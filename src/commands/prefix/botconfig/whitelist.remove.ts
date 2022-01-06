@@ -52,12 +52,12 @@ export default class WhitelistaddCommand extends BaseCommand {
          undefined ||
          (await getGuildRole(context, args.userOrRoleOrChannel)) ||
          undefined;
-         if(!target) return context.editOrReply('⚠ | No pude identificar el objetivo')
+      if (!target) return context.editOrReply('⚠ | No pude identificar el objetivo')
       const isMember = target instanceof Structures.Member;
       const isChannel = target instanceof Structures.ChannelGuildBase;
       const isRole = target instanceof Structures.Role;
       const module = args.module;
-      const document = await Model.findOne({ ServerID: context.guildId });
+      const document = (await Model.findOne({ ServerID: context.guildId }))!;
 
       switch (module.toLowerCase()) {
          case 'antinuke':
@@ -69,7 +69,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isRole) {
                if (!document.Modules.AntiNuker.Whitelist.Roles.includes(target.id))
                   return context.editOrReply('ℹ️ | El Rol no se encuentra en la lista');
-               document.Modules.AntiNuker.Whitelist.Roles = document.Modules.AntiNuker.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiNuker.Whitelist.Roles = document.Modules.AntiNuker.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El rol ${target.name} fue removido de la whitelist del AntiNuke`
@@ -78,7 +78,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isMember) {
                if (!document.Modules.AntiNuker.Whitelist.Users.includes(target.id))
                   return context.editOrReply('ℹ️ | El Usuario no se encuentra en la lista');
-               document.Modules.AntiNuker.Whitelist.Users = document.Modules.AntiNuker.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiNuker.Whitelist.Users = document.Modules.AntiNuker.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Miembro ${target.user.tag} fue removido de la Whitelist del AntiNuke`
@@ -89,7 +89,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isChannel) {
                if (!document.Modules.AntiFlood.Whitelist.Channels.includes(target.id))
                   return context.editOrReply('ℹ️ | El Canal no se encuentra en la lista');
-               document.Modules.AntiFlood.Whitelist.Channels = document.Modules.AntiFlood.Whitelist.Channels.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiFlood.Whitelist.Channels = document.Modules.AntiFlood.Whitelist.Channels.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Canal ${target.name} fue removido de la Whitelist del AntiFlood`
@@ -98,7 +98,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isRole) {
                if (!document.Modules.AntiFlood.Whitelist.Roles.includes(target.id))
                   return context.editOrReply('ℹ️ | El Rol no se encuentra en la lista');
-               document.Modules.AntiFlood.Whitelist.Roles = document.Modules.AntiFlood.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiFlood.Whitelist.Roles = document.Modules.AntiFlood.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El rol ${target.name} fue removido de la whitelist del AntiFlood`
@@ -107,7 +107,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isMember) {
                if (!document.Modules.AntiFlood.Whitelist.Users.includes(target.id))
                   return context.editOrReply('ℹ️ | El Usuario no se encuentra en la lista');
-               document.Modules.AntiFlood.Whitelist.Users = document.Modules.AntiFlood.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiFlood.Whitelist.Users = document.Modules.AntiFlood.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Miembro ${target.user.tag} fue removido de la Whitelist del AntiFlood`
@@ -118,7 +118,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isChannel) {
                if (!document.Modules.Automod.Whitelist.Channels.includes(target.id))
                   return context.editOrReply('ℹ️ | El Canal no se encuentra en la lista');
-               document.Modules.Automod.Whitelist.Channels = document.Modules.Automod.Whitelist.Channels.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.Automod.Whitelist.Channels = document.Modules.Automod.Whitelist.Channels.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Canal ${target.name} fue removido de la Whitelist del Automod`
@@ -127,7 +127,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isRole) {
                if (!document.Modules.Automod.Whitelist.Roles.includes(target.id))
                   return context.editOrReply('ℹ️ | El Rol no se encuentra en la lista');
-               document.Modules.Automod.Whitelist.Roles = document.Modules.Automod.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.Automod.Whitelist.Roles = document.Modules.Automod.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El rol ${target.name} fue removido de la whitelist del Automod`
@@ -136,7 +136,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isMember) {
                if (!document.Modules.Automod.Whitelist.Users.includes(target.id))
                   return context.editOrReply('ℹ️ | El Usuario no se encuentra en la lista');
-               document.Modules.Automod.Whitelist.Users = document.Modules.Automod.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.Automod.Whitelist.Users = document.Modules.Automod.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Miembro ${target.user.tag} fue removido de la Whitelist del Automod`
@@ -147,7 +147,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isChannel) {
                if (!document.Modules.AntiWallText.Whitelist.Channels.includes(target.id))
                   return context.editOrReply('ℹ️ | El Canal no se encuentra en la lista');
-               document.Modules.AntiWallText.Whitelist.Channels = document.Modules.AntiWallText.Whitelist.Channels.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiWallText.Whitelist.Channels = document.Modules.AntiWallText.Whitelist.Channels.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Canal ${target.name} fue removido de la Whitelist del AntiWallText`
@@ -156,7 +156,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isRole) {
                if (!document.Modules.AntiWallText.Whitelist.Roles.includes(target.id))
                   return context.editOrReply('ℹ️ | El Rol no se encuentra en la lista');
-               document.Modules.AntiWallText.Whitelist.Roles = document.Modules.AntiWallText.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiWallText.Whitelist.Roles = document.Modules.AntiWallText.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El rol ${target.name} fue removido de la whitelist del AntiWallText`
@@ -165,7 +165,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isMember) {
                if (!document.Modules.AntiWallText.Whitelist.Users.includes(target.id))
                   return context.editOrReply('ℹ️ | El Usuario no se encuentra en la lista');
-               document.Modules.AntiWallText.Whitelist.Users = document.Modules.AntiWallText.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiWallText.Whitelist.Users = document.Modules.AntiWallText.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Miembro ${target.user.tag} fue removido de la Whitelist del AntiWallText`
@@ -176,7 +176,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isChannel) {
                if (!document.Modules.AntiCaps.Whitelist.Channels.includes(target.id))
                   return context.editOrReply('ℹ️ | El Canal no se encuentra en la lista');
-               document.Modules.AntiCaps.Whitelist.Channels = document.Modules.AntiCaps.Whitelist.Channels.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiCaps.Whitelist.Channels = document.Modules.AntiCaps.Whitelist.Channels.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Canal ${target.name} fue removido de la Whitelist del AntiCaps`
@@ -185,7 +185,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isRole) {
                if (!document.Modules.AntiCaps.Whitelist.Roles.includes(target.id))
                   return context.editOrReply('ℹ️ | El Rol no se encuentra en la lista');
-               document.Modules.AntiCaps.Whitelist.Roles = document.Modules.AntiCaps.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiCaps.Whitelist.Roles = document.Modules.AntiCaps.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El rol ${target.name} fue removido de la whitelist del AntiCaps`
@@ -194,7 +194,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isMember) {
                if (!document.Modules.AntiCaps.Whitelist.Users.includes(target.id))
                   return context.editOrReply('ℹ️ | El Usuario no se encuentra en la lista');
-               document.Modules.AntiCaps.Whitelist.Users = document.Modules.AntiCaps.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiCaps.Whitelist.Users = document.Modules.AntiCaps.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Miembro ${target.user.tag} fue removido de la Whitelist del AntiCaps`
@@ -205,7 +205,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isChannel) {
                if (!document.Modules.AntiLinks.Whitelist.Channels.includes(target.id))
                   return context.editOrReply('ℹ️ | El Canal no se encuentra en la lista');
-               document.Modules.AntiLinks.Whitelist.Channels = document.Modules.AntiLinks.Whitelist.Channels.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiLinks.Whitelist.Channels = document.Modules.AntiLinks.Whitelist.Channels.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Canal ${target.name} fue removido de la Whitelist del AntiLinks`
@@ -214,7 +214,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isRole) {
                if (!document.Modules.AntiLinks.Whitelist.Roles.includes(target.id))
                   return context.editOrReply('ℹ️ | El Rol no se encuentra en la lista');
-               document.Modules.AntiLinks.Whitelist.Roles = document.Modules.AntiLinks.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiLinks.Whitelist.Roles = document.Modules.AntiLinks.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El rol ${target.name} fue removido de la whitelist del AntiLinks`
@@ -223,7 +223,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             if (isMember) {
                if (!document.Modules.AntiLinks.Whitelist.Users.includes(target.id))
                   return context.editOrReply('ℹ️ | El Usuario no se encuentra en la lista');
-               document.Modules.AntiLinks.Whitelist.Users = document.Modules.AntiLinks.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+               document.Modules.AntiLinks.Whitelist.Users = document.Modules.AntiLinks.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                await document.save();
                return context.editOrReply(
                   `El Miembro ${target.user.tag} fue removido de la Whitelist del AntiLinks`
@@ -232,88 +232,88 @@ export default class WhitelistaddCommand extends BaseCommand {
             break;
          case "all":
             if (isChannel) {
-               let finalModels:string[] = [];
+               let finalModels: string[] = [];
                if (document.Modules.Automod.Whitelist.Channels.includes(target.id)) {
-                  document.Modules.Automod.Whitelist.Channels = document.Modules.Automod.Whitelist.Channels.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.Automod.Whitelist.Channels = document.Modules.Automod.Whitelist.Channels.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('Automod')
                }
                if (document.Modules.AntiWallText.Whitelist.Channels.includes(target.id)) {
-                  document.Modules.AntiWallText.Whitelist.Channels = document.Modules.AntiWallText.Whitelist.Channels.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiWallText.Whitelist.Channels = document.Modules.AntiWallText.Whitelist.Channels.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiWallText')
                }
                if (document.Modules.AntiFlood.Whitelist.Channels.includes(target.id)) {
-                  document.Modules.AntiFlood.Whitelist.Channels = document.Modules.AntiFlood.Whitelist.Channels.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiFlood.Whitelist.Channels = document.Modules.AntiFlood.Whitelist.Channels.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiFlood')
                }
                if (document.Modules.AntiCaps.Whitelist.Channels.includes(target.id)) {
-                  document.Modules.AntiCaps.Whitelist.Channels = document.Modules.AntiCaps.Whitelist.Channels.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiCaps.Whitelist.Channels = document.Modules.AntiCaps.Whitelist.Channels.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiCaps')
                }
                if (document.Modules.AntiLinks.Whitelist.Channels.includes(target.id)) {
-                  document.Modules.AntiLinks.Whitelist.Channels = document.Modules.AntiLinks.Whitelist.Channels.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiLinks.Whitelist.Channels = document.Modules.AntiLinks.Whitelist.Channels.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiLinks')
                }
-               if(!finalModels.length) return context.editOrReply('ℹ️ | El Canal no se encuentra en ninguna Whitelist')
+               if (!finalModels.length) return context.editOrReply('ℹ️ | El Canal no se encuentra en ninguna Whitelist')
                await document.save()
                return context.editOrReply(`El Canal \`${target.name}\` fue removido de la Whitelist de: \`${finalModels.join(', ')}\``)
             }
             if (isRole) {
-               let finalModels:string[] = [];
+               let finalModels: string[] = [];
                if (document.Modules.AntiNuker.Whitelist.Roles.includes(target.id)) {
-                  document.Modules.AntiNuker.Whitelist.Roles = document.Modules.AntiNuker.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiNuker.Whitelist.Roles = document.Modules.AntiNuker.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiNuke')
                }
                if (document.Modules.Automod.Whitelist.Roles.includes(target.id)) {
-                  document.Modules.Automod.Whitelist.Roles = document.Modules.Automod.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.Automod.Whitelist.Roles = document.Modules.Automod.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('Automod')
                }
                if (document.Modules.AntiWallText.Whitelist.Roles.includes(target.id)) {
-                  document.Modules.AntiWallText.Whitelist.Roles = document.Modules.AntiWallText.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiWallText.Whitelist.Roles = document.Modules.AntiWallText.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiWallText')
                }
                if (document.Modules.AntiFlood.Whitelist.Roles.includes(target.id)) {
-                  document.Modules.AntiFlood.Whitelist.Roles = document.Modules.AntiFlood.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiFlood.Whitelist.Roles = document.Modules.AntiFlood.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiFlood')
                }
                if (document.Modules.AntiCaps.Whitelist.Roles.includes(target.id)) {
-                  document.Modules.AntiCaps.Whitelist.Roles = document.Modules.AntiCaps.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiCaps.Whitelist.Roles = document.Modules.AntiCaps.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiCaps')
                }
                if (document.Modules.AntiLinks.Whitelist.Roles.includes(target.id)) {
-                  document.Modules.AntiLinks.Whitelist.Roles = document.Modules.AntiLinks.Whitelist.Roles.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiLinks.Whitelist.Roles = document.Modules.AntiLinks.Whitelist.Roles.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiLinks')
                }
-               if(!finalModels.length) return context.editOrReply('ℹ️ | El Rol no se encuentra en ninguna Whitelist')
+               if (!finalModels.length) return context.editOrReply('ℹ️ | El Rol no se encuentra en ninguna Whitelist')
                await document.save()
                return context.editOrReply(`El Rol \`${target.name}\` fue removido de la Whitelist de: \`${finalModels.join(', ')}\``)
             }
             if (isMember) {
-               let finalModels:string[] = [];
+               let finalModels: string[] = [];
                if (document.Modules.AntiNuker.Whitelist.Users.includes(target.id)) {
-                  document.Modules.AntiNuker.Whitelist.Users = document.Modules.AntiNuker.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiNuker.Whitelist.Users = document.Modules.AntiNuker.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiNuke')
                }
                if (document.Modules.Automod.Whitelist.Users.includes(target.id)) {
-                  document.Modules.Automod.Whitelist.Users = document.Modules.Automod.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.Automod.Whitelist.Users = document.Modules.Automod.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('Automod')
                }
                if (document.Modules.AntiWallText.Whitelist.Users.includes(target.id)) {
-                  document.Modules.AntiWallText.Whitelist.Users = document.Modules.AntiWallText.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiWallText.Whitelist.Users = document.Modules.AntiWallText.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiWallText')
                }
                if (document.Modules.AntiFlood.Whitelist.Users.includes(target.id)) {
-                  document.Modules.AntiFlood.Whitelist.Users = document.Modules.AntiFlood.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiFlood.Whitelist.Users = document.Modules.AntiFlood.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiFlood')
                }
                if (document.Modules.AntiCaps.Whitelist.Users.includes(target.id)) {
-                  document.Modules.AntiCaps.Whitelist.Users = document.Modules.AntiCaps.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiCaps.Whitelist.Users = document.Modules.AntiCaps.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiCaps')
                }
                if (document.Modules.AntiLinks.Whitelist.Users.includes(target.id)) {
-                  document.Modules.AntiLinks.Whitelist.Users = document.Modules.AntiLinks.Whitelist.Users.filter((arrItem:string) => arrItem !== target.id)
+                  document.Modules.AntiLinks.Whitelist.Users = document.Modules.AntiLinks.Whitelist.Users.filter((arrItem: string) => arrItem !== target.id)
                   finalModels.push('AntiLinks')
                }
-               if(!finalModels.length) return context.editOrReply('ℹ️ | El Miembro no se encuentra en ninguna whitelist')
+               if (!finalModels.length) return context.editOrReply('ℹ️ | El Miembro no se encuentra en ninguna whitelist')
                await document.save()
                return context.editOrReply(`El Miembro \`${target.user.tag}\` fue removido de la Whitelist de: \`${finalModels.join(', ')}\``)
             }

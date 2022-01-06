@@ -1,132 +1,132 @@
-export type CacheObject = {
-	ServerID: String,
-    Prefix: String,
- 
+export interface ServerConfig {
+    ServerID: string,
+    Prefix: string,
+
     Channels: {
-        JoinLog: String,
-        ExitLog: String,
-        ModLog: String
+        JoinLog: string,
+        ExitLog: string,
+        ModLog: string
     },
- 
+
     Roles: {
-        MuteRol: String,
+        MuteRol: string,
     },
- 
+
     Users: {
-        Trusted: Array<String>,
+        Trusted: string[],
     },
- 
+
     Modules: {
         AntiNuker: {
-            Enabled: Boolean,
+            Enabled: boolean,
             Whitelist: {
-                Roles: Array<String>,
-                Users: Array<String>
+                Roles: string[],
+                Users: string[]
             },
             Config: {
                 maxBans: {
-                    Enabled: Boolean,
-                    Limit: Number
+                    Enabled: boolean,
+                    Limit: number
                 },
                 maxCreateEmojis: {
-                    Enabled: Boolean,
-                    Limit: Number
+                    Enabled: boolean,
+                    Limit: number
                 },
                 maxDeleteEmojis: {
-                    Enabled: Boolean,
-                    Limit: Number
+                    Enabled: boolean,
+                    Limit: number
                 },
                 maxCreatedChannels: {
-                    Enabled: Boolean,
-                    Limit: Number
+                    Enabled: boolean,
+                    Limit: number
                 },
                 maxCreatedRoles: {
-                    Enabled: Boolean,
-                    Limit: Number
+                    Enabled: boolean,
+                    Limit: number
                 },
                 maxDeletedChannels: {
-                    Enabled: Boolean,
-                    Limit: Number
+                    Enabled: boolean,
+                    Limit: number
                 },
                 maxDeletedRoles: {
-                    Enabled: Boolean,
-                    Limit: Number
+                    Enabled: boolean,
+                    Limit: number
                 },
                 maxKicks: {
-                    Enabled: Boolean,
-                    Limit: Number
+                    Enabled: boolean,
+                    Limit: number
                 },
                 maxUnbans: {
-                    Enabled: Boolean,
-                    Limit: Number
+                    Enabled: boolean,
+                    Limit: number
                 },
             }
         },
- 
+
         Lockdown: {
-            Enabled: Boolean,
-            Mode: String,
-            Target: String
+            Enabled: boolean,
+            Mode: string,
+            Target: string
         },
- 
+
         Automod: {
-            Enabled: Boolean,
-            Words: [{
-                Word: String,
-                Percent: Number
-            }],
+            Enabled: boolean,
+            Words: {
+                Word: string,
+                Percent: number
+            }[],
             Whitelist: {
-                Roles: Array<String>,
-                Users: Array<String>,
-                Channels: Array<String>
+                Roles: string[],
+                Users: string[],
+                Channels: string[]
             },
         },
- 
+
         AntiWallText: {
-            Enabled: Boolean,
-            Limit: Number,
-            PercentTimeLimit: Number,
-            Percent: Number,
+            Enabled: boolean,
+            Limit: number,
+            PercentTimeLimit: number,
+            Percent: number,
             Whitelist: {
-                Roles: Array<String>,
-                Users: Array<String>,
-                Channels: Array<String>
+                Roles: string[],
+                Users: string[],
+                Channels: string[]
             },
         },
- 
+
         AntiFlood: {
-            Enabled: Boolean,
-            PercentTimeLimit: Number,
-            Percent: Number,
+            Enabled: boolean,
+            PercentTimeLimit: number,
+            Percent: number,
             Whitelist: {
-                Roles: Array<String>,
-                Users: Array<String>,
-                Channels: Array<String>
+                Roles: string[],
+                Users: string[],
+                Channels: string[]
             },
         },
- 
+
         AntiCaps: {
-            Enabled: Boolean,
-            Limit: Number,
-            Percent: Number,
-            PercentTimeLimit: Number,
+            Enabled: boolean,
+            Limit: number,
+            Percent: number,
+            PercentTimeLimit: number,
             Whitelist: {
-                Roles: Array<String>,
-                Users: Array<String>,
-                Channels: Array<String>
+                Roles: string[],
+                Users: string[],
+                Channels: string[]
             },
         },
- 
+
         AntiLinks: {
-           AllowImages: Boolean,
-           Percent: Number,
-           PercentTimeLimit: Number,
-           Whitelist: {
-                Roles: Array<String>,
-                Users: Array<String>,
-                Channels: Array<String>
+            AllowImages: boolean,
+            Percent: number,
+            PercentTimeLimit: number,
+            Whitelist: {
+                Roles: string[],
+                Users: string[],
+                Channels: string[]
             },
         },
- 
+
     }
 }

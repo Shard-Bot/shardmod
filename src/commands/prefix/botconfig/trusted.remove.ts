@@ -41,7 +41,7 @@ export default class TrustedRemoveCommand extends BaseCommand {
          (await getUserByText(context, args.user));
       const isMember = target instanceof Structures.Member;
       if (!target || !isMember) return context.editOrReply('⚠ | No pude encontrar el Miembro');
-      const document = await Model.findOne({ ServerID: context.guildId });
+      const document = (await Model.findOne({ ServerID: context.guildId }))!;
       if (!document.Users.Trusted.includes(target.id))
          return context.editOrReply('ℹ️ | El Miembro no se encuentra en la lista');
       document.Users.Trusted = document.Users.Trusted.filter(

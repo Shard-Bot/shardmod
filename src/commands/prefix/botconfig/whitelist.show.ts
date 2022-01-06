@@ -28,7 +28,7 @@ export default class WhitelistShowCommand extends BaseCommand {
    }
 
    async run(context: Command.Context, args: param) {
-      const document = await Model.findOne({ ServerID: context.guildId });
+      const document = (await Model.findOne({ ServerID: context.guildId }))!;
       const AntinukeWhitelist = document.Modules.AntiNuker.Whitelist;
       const AutomodWhitelist = document.Modules.Automod.Whitelist;
       const AntiWallTextWhitelist = document.Modules.AntiWallText.Whitelist;
@@ -82,8 +82,8 @@ export default class WhitelistShowCommand extends BaseCommand {
                   `Canales: (${AutomodWhitelist.Channels.length}/10)`,
                   AutomodWhitelist.Channels.length
                      ? AutomodWhitelist.Channels.map(
-                          (channelId: string) => `• <#${channelId}>`
-                       ).join('\n')
+                        (channelId: string) => `• <#${channelId}>`
+                     ).join('\n')
                      : '`Sin Canales`',
                   true
                );
@@ -94,8 +94,8 @@ export default class WhitelistShowCommand extends BaseCommand {
                   `Usuarios: (${AntiWallTextWhitelist.Users.length}/10)`,
                   AntiWallTextWhitelist.Users.length
                      ? AntiWallTextWhitelist.Users.map((userId: string) => `• <@${userId}>`).join(
-                          '\n'
-                       )
+                        '\n'
+                     )
                      : '`Sin Usuarios`',
                   true
                );
@@ -104,8 +104,8 @@ export default class WhitelistShowCommand extends BaseCommand {
                   `Roles: (${AntiWallTextWhitelist.Roles.length}/10)`,
                   AntiWallTextWhitelist.Roles.length
                      ? AntiWallTextWhitelist.Roles.map((roleId: string) => `• <@&${roleId}>`).join(
-                          '\n'
-                       )
+                        '\n'
+                     )
                      : '`Sin Roles`',
                   true
                );
@@ -114,8 +114,8 @@ export default class WhitelistShowCommand extends BaseCommand {
                   `Canales: (${AntiWallTextWhitelist.Channels.length}/10)`,
                   AntiWallTextWhitelist.Channels.length
                      ? AntiWallTextWhitelist.Channels.map(
-                          (channelId: string) => `• <#${channelId}>`
-                       ).join('\n')
+                        (channelId: string) => `• <#${channelId}>`
+                     ).join('\n')
                      : '`Sin Canales`',
                   true
                );
@@ -134,8 +134,8 @@ export default class WhitelistShowCommand extends BaseCommand {
                   `Roles: (${AntiFloodWhitelist.Roles.length}/10)`,
                   AntiFloodWhitelist.Roles.length
                      ? AntiFloodWhitelist.Roles.map((roleId: string) => `• <@&${roleId}>`).join(
-                          '\n'
-                       )
+                        '\n'
+                     )
                      : '`Sin Roles`',
                   true
                );
@@ -144,8 +144,8 @@ export default class WhitelistShowCommand extends BaseCommand {
                   `Canales: (${AntiFloodWhitelist.Channels.length}/10)`,
                   AntiFloodWhitelist.Channels.length
                      ? AntiFloodWhitelist.Channels.map(
-                          (channelId: string) => `• <#${channelId}>`
-                       ).join('\n')
+                        (channelId: string) => `• <#${channelId}>`
+                     ).join('\n')
                      : '`Sin Canales`',
                   true
                );
@@ -172,8 +172,8 @@ export default class WhitelistShowCommand extends BaseCommand {
                   `Canales: (${AntiCapsWhitelist.Channels.length}/10)`,
                   AntiCapsWhitelist.Channels.length
                      ? AntiCapsWhitelist.Channels.map(
-                          (channelId: string) => `• <#${channelId}>`
-                       ).join('\n')
+                        (channelId: string) => `• <#${channelId}>`
+                     ).join('\n')
                      : '`Sin Canales`',
                   true
                );
@@ -192,8 +192,8 @@ export default class WhitelistShowCommand extends BaseCommand {
                   `Roles: (${AntiLinksWhitelist.Roles.length}/10)`,
                   AntiLinksWhitelist.Roles.length
                      ? AntiLinksWhitelist.Roles.map((roleId: string) => `• <@&${roleId}>`).join(
-                          '\n'
-                       )
+                        '\n'
+                     )
                      : '`Sin Roles`',
                   true
                );
@@ -202,8 +202,8 @@ export default class WhitelistShowCommand extends BaseCommand {
                   `Canales: (${AntiLinksWhitelist.Channels.length}/10)`,
                   AntiLinksWhitelist.Channels.length
                      ? AntiLinksWhitelist.Channels.map(
-                          (channelId: string) => `• <#${channelId}>`
-                       ).join('\n')
+                        (channelId: string) => `• <#${channelId}>`
+                     ).join('\n')
                      : '`Sin Canales`',
                   true
                );
@@ -249,6 +249,7 @@ export default class WhitelistShowCommand extends BaseCommand {
                })
             );
          } else {
+            // @ts-expect-error
             const Channels: Array<string> = object.value.Channels;
             const ChannelsValues = Channels.length
                ? Channels.map((channelId: string) => `• <#${channelId}>`).join('\n')

@@ -41,9 +41,10 @@ export default class TrustedAddCommand extends BaseCommand {
          (await getUserByText(context, args.user));
       const isMember = target instanceof Structures.Member;
       if (!target || !isMember) return context.editOrReply('⚠ | No pude encontrar el Miembro');
-      const document = await Model.findOne({ ServerID: context.guildId });
+      const document = (await Model.findOne({ ServerID: context.guildId }))!;
       if (document.Users.Trusted.includes(target.id))
          return context.editOrReply('ℹ️ | El Usuario ya se encuentra en la lista');
+
       document.Users.Trusted.push(target.id);
       await document.save();
       return context.editOrReply(

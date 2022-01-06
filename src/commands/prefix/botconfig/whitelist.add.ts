@@ -56,8 +56,8 @@ export default class WhitelistaddCommand extends BaseCommand {
       const isChannel = target instanceof Structures.ChannelGuildBase;
       const isRole = target instanceof Structures.Role;
       const module = args.module;
-      if(!target) return context.editOrReply('⚠ | No pude identificar el objetivo');
-      const document = await Model.findOne({ ServerID: context.guildId });
+      if (!target) return context.editOrReply('⚠ | No pude identificar el objetivo');
+      const document = (await Model.findOne({ ServerID: context.guildId }))!;
 
       switch (module.toLowerCase()) {
          case 'antinuke':
@@ -232,7 +232,7 @@ export default class WhitelistaddCommand extends BaseCommand {
             break;
          case "all":
             if (isChannel) {
-               let finalModels:string[] = [];
+               let finalModels: string[] = [];
                if (!document.Modules.Automod.Whitelist.Channels.includes(target.id)) {
                   await document.Modules.Automod.Whitelist.Channels.push(target.id)
                   finalModels.push('Automod')
@@ -253,12 +253,12 @@ export default class WhitelistaddCommand extends BaseCommand {
                   await document.Modules.AntiLinks.Whitelist.Channels.push(target.id)
                   finalModels.push('AntiLinks')
                }
-               if(!finalModels.length) return context.editOrReply('ℹ️ | El Canal ya se encuentra en todas las Whitelists')
+               if (!finalModels.length) return context.editOrReply('ℹ️ | El Canal ya se encuentra en todas las Whitelists')
                await document.save()
                return context.editOrReply(`El Canal \`${target.name}\` fue añadido a la Whitelist de: \`${finalModels.join(', ')}\``)
             }
             if (isRole) {
-               let finalModels:string[] = [];
+               let finalModels: string[] = [];
                if (!document.Modules.AntiNuker.Whitelist.Roles.includes(target.id)) {
                   await document.Modules.AntiNuker.Whitelist.Roles.push(target.id)
                   finalModels.push('Antinuke')
@@ -283,12 +283,12 @@ export default class WhitelistaddCommand extends BaseCommand {
                   await document.Modules.AntiLinks.Whitelist.Roles.push(target.id)
                   finalModels.push('AntiLinks')
                }
-               if(!finalModels.length) return context.editOrReply('ℹ️ | El Rol ya se encuentra en todas las Whitelists')
+               if (!finalModels.length) return context.editOrReply('ℹ️ | El Rol ya se encuentra en todas las Whitelists')
                await document.save()
                return context.editOrReply(`El Rol \`${target.name}\` fue añadido a la Whitelist de: \`${finalModels.join(', ')}\``)
             }
             if (isMember) {
-               let finalModels:string[] = [];
+               let finalModels: string[] = [];
                if (!document.Modules.AntiNuker.Whitelist.Users.includes(target.id)) {
                   await document.Modules.AntiNuker.Whitelist.Users.push(target.id)
                   finalModels.push('AntiNuke')
@@ -313,7 +313,7 @@ export default class WhitelistaddCommand extends BaseCommand {
                   await document.Modules.AntiLinks.Whitelist.Users.push(target.id)
                   finalModels.push('AntiLinks')
                }
-               if(!finalModels.length) return context.editOrReply('ℹ️ | El Miembro ya se encuentra en todas las Whitelists')
+               if (!finalModels.length) return context.editOrReply('ℹ️ | El Miembro ya se encuentra en todas las Whitelists')
                await document.save()
                return context.editOrReply(`El Miembro \`${target.user.tag}\` fue añadido a la Whitelist de: \`${finalModels.join(', ')}\``)
             }

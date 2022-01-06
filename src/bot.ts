@@ -8,8 +8,8 @@ import './cache/index';
 (async () => {
 
   await mongoose.connect(config.mongoURL)
-  .then(db =>  console.log("ShardDB Conectado")) 
-  .catch(err => console.error(err))
+    .then(() => console.log("ShardDB Conectado"))
+    .catch(console.error)
 
   Client.on(ClientEvents.REST_RESPONSE, async ({ response, restRequest }) => {
     const { route } = response.request;
