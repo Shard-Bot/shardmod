@@ -6,6 +6,8 @@ import { EmbedColors } from '../../../utils/constants';
 import { getUserByText, getGuildChannel, getGuildRole } from '../../../utils/functions';
 import mongoose from 'mongoose';
 import { Model } from '../../../schemas/serverconfig';
+import CacheCollection from '../../../cache/CacheCollection';
+
 export const COMMAND_NAME = 'whitelist add';
 type param = {
    userOrRoleOrChannel: string;
@@ -21,6 +23,7 @@ export default class WhitelistaddCommand extends BaseCommand {
          args: [{ name: 'module', type: String, required: true, aliases: ['sistema'] }],
          label: 'userOrRoleOrChannel',
          metadata: {
+            trustedOnly: true,
             description: 'Agrega a un Usuario|Canal|Rol a la whitelist de un modulo',
             usage: [`${COMMAND_NAME} <Miembro|Canal|Rol> <-module <sistema> >`],
             example: [
@@ -322,5 +325,8 @@ export default class WhitelistaddCommand extends BaseCommand {
             return context.editOrReply('⚠ | Especifica un modulo valido');
             break;
       }
+   }
+   onSuccess(context: Command.Context){
+      CacheCollection.loadData(context.guildId!)
    }
 }

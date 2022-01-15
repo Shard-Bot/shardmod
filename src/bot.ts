@@ -1,10 +1,13 @@
 import config from '../config.json'
-import { InteractionCommandClient, CommandClient } from 'detritus-client';
+import { InteractionCommandClient } from 'detritus-client';
 import { ClientEvents } from 'detritus-client/lib/constants';
 import mongoose from 'mongoose';
 import Client from './client';
 import 'reflect-metadata';
 import CacheCollection from './cache/CacheCollection';
+import './cache/index';
+import { ShardBotCommandClient } from './commandClient';
+
 
 (async () => {
 
@@ -30,15 +33,7 @@ import CacheCollection from './cache/CacheCollection';
   await Client.run();
 
   {
-    const shardCommandBot = new CommandClient(Client, {
-      activateOnEdits: true,
-      mentionsEnabled: true,
-      prefix: 's!',
-      ratelimits: [
-        { duration: 60000, limit: 50, type: 'guild' },
-        { duration: 5000, limit: 5, type: 'channel' },
-      ],
-    });
+    const shardCommandBot = new ShardBotCommandClient();
 
     await shardCommandBot.addMultipleIn('./commands/prefix');
     await shardCommandBot.run();

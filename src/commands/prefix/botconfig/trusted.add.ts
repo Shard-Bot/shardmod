@@ -1,10 +1,10 @@
 import { Command, Structures, CommandClient } from 'detritus-client';
 import { Permissions } from 'detritus-client/lib/constants';
 import { BaseCommand } from '../basecommand';
-import { Embed, intToHex } from 'detritus-client/lib/utils';
 import { getUserByText } from '../../../utils/functions';
-import mongoose from 'mongoose';
 import { Model } from '../../../schemas/serverconfig';
+import CacheCollection from '../../../cache/CacheCollection';
+
 export const COMMAND_NAME = 'trusted add';
 type param = {
    user: string;
@@ -18,6 +18,7 @@ export default class TrustedAddCommand extends BaseCommand {
          disableDm: true,
          label: 'user',
          metadata: {
+            guildOwnerOnly: true,
             description: 'Agrega a un Usuario a la lista trusted del servidor',
             usage: [`${COMMAND_NAME} <Miembro>`],
             example: [`${COMMAND_NAME} @fatand`],
@@ -50,5 +51,8 @@ export default class TrustedAddCommand extends BaseCommand {
       return context.editOrReply(
          `El Miembro ${target.user.tag} fue añadido a la lista trusted del servidor`
       );
+   }
+   onSuccess(context: Command.Context){
+      CacheCollection.loadData(context.guildId!)
    }
 }

@@ -261,6 +261,6 @@ const Schema = new mongoose.Schema({
         },
 
     }
-})
+}, {versionKey: false})
 
 export const Model = mongoose.model<ServerConfig>("ServerConfig", Schema) 

@@ -43,8 +43,8 @@ export default class AvatarCommand extends BaseCommand {
       if (isMember) {
          embed.setImage(User.avatarUrlFormat(null, { size: 1024 }));
          URLS.push({ name: 'Servidor', URL: User.avatarUrlFormat(null, { size: 4096 }) });
-         if (User.avatarUrl !== User.user.avatarUrl) {
-            embed.setThumbnail(User.user.avatarUrlFormat(null, { size: 1024 }));
+         if (User.avatarUrl !== (User as Structures.Member).user.avatarUrl) {
+            embed.setThumbnail((User as Structures.Member).user.avatarUrlFormat(null, { size: 1024 }));
             URLS.push({ name: 'Usuario', URL: User.avatarUrlFormat(null, { size: 4096 }) });
          }
       } else {

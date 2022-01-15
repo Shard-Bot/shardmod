@@ -15,6 +15,7 @@ export default class TrustedShowCommand extends BaseCommand {
          aliases: ['t show'],
          disableDm: true,
          metadata: {
+            trustedOnly: true,
             description: 'Muestra la lista trusted del servidor',
             usage: [`${COMMAND_NAME}`],
             example: [`${COMMAND_NAME}`],

@@ -18,6 +18,7 @@ export default class WhitelistShowCommand extends BaseCommand {
          args: [{ name: 'module', aliases: ['sistema'], type: String }],
          disableDm: true,
          metadata: {
+            trustedOnly: true,
             description: 'Muestra las Whitelists del servidor',
             usage: [`${COMMAND_NAME} (-module <sistema>)`],
             example: [`${COMMAND_NAME}`, `${COMMAND_NAME} -module antiflood`],

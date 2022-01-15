@@ -5,6 +5,8 @@ import { Embed, intToHex } from 'detritus-client/lib/utils';
 import { getUserByText } from '../../../utils/functions';
 import mongoose from 'mongoose';
 import { Model } from '../../../schemas/serverconfig';
+import CacheCollection from '../../../cache/CacheCollection';
+
 export const COMMAND_NAME = 'trusted remove';
 type param = {
    user: string;
@@ -18,6 +20,7 @@ export default class TrustedRemoveCommand extends BaseCommand {
          disableDm: true,
          label: 'user',
          metadata: {
+            guildOwnerOnly: true,
             description: 'Remueve a un Usuario de la lista trusted del servidor',
             usage: [`${COMMAND_NAME} <Miembro>`],
             example: [`${COMMAND_NAME} @fatand`],
@@ -51,5 +54,8 @@ export default class TrustedRemoveCommand extends BaseCommand {
       return context.editOrReply(
          `El Miembro ${target.user.tag} fue removido de la lista trusted del servidor`
       );
+   }
+   onSuccess(context: Command.Context){
+      CacheCollection.loadData(context.guildId!)
    }
 }
