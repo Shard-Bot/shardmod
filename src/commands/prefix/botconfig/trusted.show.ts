@@ -6,6 +6,7 @@ import { getUserByText } from '../../../utils/functions';
 import { EmbedColors } from '../../../utils/constants';
 import mongoose from 'mongoose';
 import { Model } from '../../../schemas/serverconfig';
+import CacheCollection from '../../../cache/CacheCollection';
 export const COMMAND_NAME = 'trusted show';
 
 export default class TrustedShowCommand extends BaseCommand {
@@ -25,7 +26,7 @@ export default class TrustedShowCommand extends BaseCommand {
       });
    }
    async run(context: Command.Context) {
-      const document = (await Model.findOne({ ServerID: context.guildId }))!;
+      const document = CacheCollection.get(context.guildId);
       if (!document.Users.Trusted.length)
          return context.editOrReply('ℹ️ | No hay usuarios en la base de datos');
 

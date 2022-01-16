@@ -2,8 +2,8 @@ import { Command, CommandClient } from 'detritus-client';
 import { Permissions } from 'detritus-client/lib/constants';
 import { BaseCommand } from '../basecommand';
 import { paginate } from '../../../utils/paginador';
-import { Embed, intToHex } from 'detritus-client/lib/utils';
-import { Model } from '../../../schemas/serverconfig';
+import { Embed } from 'detritus-client/lib/utils';
+import CacheCollection from '../../../cache/CacheCollection';
 import { EmbedColors } from '../../../utils/constants';
 
 export const COMMAND_NAME = 'whitelist show';
@@ -29,7 +29,7 @@ export default class WhitelistShowCommand extends BaseCommand {
    }
 
    async run(context: Command.Context, args: param) {
-      const document = (await Model.findOne({ ServerID: context.guildId }))!;
+      const document = CacheCollection.get(context.guildId);
       const AntinukeWhitelist = document.Modules.AntiNuker.Whitelist;
       const AutomodWhitelist = document.Modules.Automod.Whitelist;
       const AntiWallTextWhitelist = document.Modules.AntiWallText.Whitelist;
