@@ -1,9 +1,9 @@
-import { Command, Interaction, Structures, Utils, GatewayClientEvents } from 'detritus-client';
+import { Command, Structures, GatewayClientEvents } from 'detritus-client';
 import {
    InteractionCallbackTypes,
    MessageComponentButtonStyles,
 } from 'detritus-client/lib/constants';
-import { Components, ComponentContext, Embed } from 'detritus-client/lib/utils';
+import { Components, Embed } from 'detritus-client/lib/utils';
 import { ClientEvents, MessageFlags } from 'detritus-client/lib/constants';
 import { DiscordEmojis } from './constants';
 
@@ -45,10 +45,10 @@ export async function paginate(
         if(!payload.interaction.isFromMessageComponent) return;
         if(payload.interaction.message?.id !== mainEmbed.id) return;
          if (!targets.includes(payload.interaction.userId))
-            return payload.interaction.editOrRespond({
-               content: 'Esta no es tu interacción',
-               flags: MessageFlags.EPHEMERAL,
-            });
+            return payload.interaction.respond(InteractionCallbackTypes.CHANNEL_MESSAGE_WITH_SOURCE,
+               {
+                  content: 'Esta no es tu interacción', flags: MessageFlags.EPHEMERAL
+            })
          const interactionData = payload.interaction.data as Structures.InteractionDataComponent;
          if (interactionData.customId === 'next') {
             await page++;
