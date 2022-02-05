@@ -1,8 +1,8 @@
-import { CommandClient } from 'detritus-client';
+import { CommandClient, CommandClientPrefixes } from 'detritus-client';
 import { Context, Command } from 'detritus-client/lib/command';
 
 import ShardClient from './client';
-import CacheCollection from './cache/CacheCollection';
+import CacheCollection, { cacheClass } from './cache/CacheCollection';
 
 export class ShardBotCommandClient extends CommandClient {
     constructor() {
@@ -15,6 +15,19 @@ export class ShardBotCommandClient extends CommandClient {
                 { duration: 5000, limit: 5, type: 'channel' },
             ],
         })
+    }
+
+    onPrefixCheck(context: Context){
+        if(context.guildId){
+           const guildPrefix = CacheCollection.get(context.guildId).Prefixes
+           if(guildPrefix.length) return guildPrefix.map((prefix) => prefix); else return this.prefixes.custom;
+        }
+        return this.prefixes.custom
+    }
+    
+    onMessageCheck(context: Context): boolean | Promise<boolean> {
+        if(context.user.bot) return false;
+        return true;
     }
     onCommandCheck(context: Context, command: Command<any>): boolean | Promise<boolean> {
         if (command.metadata.guildOwnerOnly) {
