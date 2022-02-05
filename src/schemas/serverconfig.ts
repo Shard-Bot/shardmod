@@ -3,7 +3,7 @@ import { ServerConfig } from '../utils/types';
 
 export const defaultData = (guildId: string) => ({
     ServerID: guildId,
-    Prefix: 's!',
+    Prefixes: [],
 
     Channels: {
         JoinLog: '',
@@ -31,11 +31,11 @@ export const defaultData = (guildId: string) => ({
                     Enabled: true,
                     Limit: 5,
                 },
-                maxCreateEmojis: {
+                maxCreatedEmojis: {
                     Enabled: true,
                     Limit: 5,
                 },
-                maxDeleteEmojis: {
+                maxDeletedEmojis: {
                     Enabled: true,
                     Limit: 5,
                 },
@@ -63,6 +63,10 @@ export const defaultData = (guildId: string) => ({
                     Enabled: true,
                     Limit: 5,
                 },
+                maxInvitedBots: {
+                    Enabled: true,
+                    Limit: 1,
+                }
             },
         },
 
@@ -74,6 +78,7 @@ export const defaultData = (guildId: string) => ({
 
         Automod: {
             Enabled: false,
+            PercentTimeLimit: 10,
             Words: [],
             Whitelist: {
                 Roles: [],
@@ -118,6 +123,7 @@ export const defaultData = (guildId: string) => ({
         },
 
         AntiLinks: {
+            Enabled: false,
             AllowImages: false,
             Percent: 100,
             PercentTimeLimit: 10,
@@ -132,7 +138,7 @@ export const defaultData = (guildId: string) => ({
 
 const Schema = new mongoose.Schema({
     ServerID: String,
-    Prefix: String,
+    Prefixes: Array,
 
     Channels: {
         JoinLog: String,
@@ -160,11 +166,11 @@ const Schema = new mongoose.Schema({
                     Enabled: Boolean,
                     Limit: Number
                 },
-                maxCreateEmojis: {
+                maxCreatedEmojis: {
                     Enabled: Boolean,
                     Limit: Number
                 },
-                maxDeleteEmojis: {
+                maxDeletedEmojis: {
                     Enabled: Boolean,
                     Limit: Number
                 },
@@ -192,6 +198,10 @@ const Schema = new mongoose.Schema({
                     Enabled: Boolean,
                     Limit: Number
                 },
+                maxInvitedBots: {
+                    Enabled: Boolean,
+                    Limit: Number
+                }
             }
         },
 
@@ -203,6 +213,7 @@ const Schema = new mongoose.Schema({
 
         Automod: {
             Enabled: Boolean,
+            PercentTimeLimit: Number,
             Words: [{
                 Word: String,
                 Percent: Number
@@ -250,6 +261,7 @@ const Schema = new mongoose.Schema({
         },
 
         AntiLinks: {
+            Enabled: Boolean,
             AllowImages: Boolean,
             Percent: Number,
             PercentTimeLimit: Number,

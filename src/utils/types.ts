@@ -1,6 +1,6 @@
 export interface ServerConfig {
     ServerID: string,
-    Prefix: string,
+    Prefixes: string[],
 
     Channels: {
         JoinLog: string,
@@ -71,6 +71,7 @@ export interface ServerConfig {
 
         Automod: {
             Enabled: boolean,
+            PercentTimeLimit: number,
             Words: {
                 Word: string,
                 Percent: number
@@ -118,6 +119,7 @@ export interface ServerConfig {
         },
 
         AntiLinks: {
+            Enabled: boolean,
             AllowImages: boolean,
             Percent: number,
             PercentTimeLimit: number,

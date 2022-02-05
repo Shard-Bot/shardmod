@@ -23,6 +23,8 @@ export const DiscordEmojis = Object.freeze({
    NEXT: '<:next:925098720045973505>',
    PREVIOUS: '<:previous:925098782767603714>',
    CANCEL: '<:cancel:925098803621687426>',
+   ON: '<:onshard:913209782268203029>',
+   OFF: '<:offshard:913209821363335178>'
 });
 
 export const EmbedColors = Object.freeze({
@@ -139,3 +141,24 @@ export const BotLogs = [
    'JoinLog',
    'ModLog'
 ]
+
+export const AntiNukesModules = {
+   'maxbans': 'maxBans',
+   'maxunbans': 'maxUnbans',
+   'maxcreatedchannels': 'maxCreatedChannels',
+   'maxdeletedChannels': 'maxDeletedChannels',
+   'maxinvitedbots': 'maxInvitedBots',
+   'maxkicks': 'maxKicks',
+   'maxcreatedRoles': 'maxCreatedRoles',
+   'maxdeletedRoles': 'maxDeletedRoles',
+   'maxcreatedEmojis': 'maxCreatedEmojis',
+   'maxdeletedEmojis': 'maxDeletedEmojis'
+}
+
+export const AntiSpamModules = {
+   'antiflood': 'AntiFlood',
+   'anticaps': 'AntiCaps',   
+   'antiwalltext': 'AntiWallText',
+   'antilinks': 'AntiLinks',   
+   'automod': 'Automod',
+}
