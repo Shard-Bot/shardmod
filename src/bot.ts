@@ -7,7 +7,7 @@ import 'reflect-metadata';
 import CacheCollection from './cache/CacheCollection';
 import './cache/index';
 import { ShardBotCommandClient } from './commandClient';
-
+import './systems/antinuke/index'
 
 (async () => {
 
@@ -46,5 +46,5 @@ import { ShardBotCommandClient } from './commandClient';
     await shardInteractionBot.run();
     console.log(`Comandos [/] cargados.`);
   }
-
+  process.on('unhandledRejection', (rej) => console.log(rej))
 })();

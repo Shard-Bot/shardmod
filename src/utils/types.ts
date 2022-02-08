@@ -5,7 +5,8 @@ export interface ServerConfig {
     Channels: {
         JoinLog: string,
         ExitLog: string,
-        ModLog: string
+        ModLog: string,
+        BotLog: string
     },
 
     Roles: {
@@ -58,6 +59,11 @@ export interface ServerConfig {
                 },
                 maxUnbans: {
                     Enabled: boolean,
+                    Limit: number
+                },
+                maxInvitedBots: {
+                    Enabled: boolean,
+                    IgnoreVerified: boolean,
                     Limit: number
                 },
             }

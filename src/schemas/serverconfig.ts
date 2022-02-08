@@ -9,6 +9,7 @@ export const defaultData = (guildId: string) => ({
         JoinLog: '',
         ExitLog: '',
         ModLog: '',
+        BotLog: '',
     },
 
     Roles: {
@@ -65,6 +66,7 @@ export const defaultData = (guildId: string) => ({
                 },
                 maxInvitedBots: {
                     Enabled: true,
+                    IgnoreVerified: true,
                     Limit: 1,
                 }
             },
@@ -143,7 +145,8 @@ const Schema = new mongoose.Schema({
     Channels: {
         JoinLog: String,
         ExitLog: String,
-        ModLog: String
+        ModLog: String,
+        BotLog: String,
     },
 
     Roles: {
@@ -200,6 +203,7 @@ const Schema = new mongoose.Schema({
                 },
                 maxInvitedBots: {
                     Enabled: Boolean,
+                    IgnoreVerified: Boolean,
                     Limit: Number
                 }
             }

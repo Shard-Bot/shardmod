@@ -6,7 +6,7 @@ import { Model } from '../../../schemas/serverconfig';
 import { EmbedColors, AntiNukesModules, DiscordEmojis, BotModules } from '../../../utils/constants';
 import CacheCollection, { cacheClass } from '../../../cache/CacheCollection';
 
-export const COMMAND_NAME = 'antinukes';
+export const COMMAND_NAME = 'antinuke';
 type param = {
    status: boolean,
 };
@@ -15,14 +15,14 @@ export default class AntinukesToggleCommand extends BaseCommand {
    constructor(client: CommandClient) {
       super(client, {
          name: COMMAND_NAME,
-         aliases: ['an', 'antinuker'],
+         aliases: ['an', 'antinuker', 'antinukes'],
          disableDm: true,
          args: [
             { name: 'status', type: Boolean, required: false, aliases: ['estado'] },
          ],
          metadata: {
             trustedOnly: true,
-            description: 'Comando para activar/desactivar el sistema Antinukes',
+            description: 'Comando para activar/desactivar el sistema Antinuke',
             usage: [`${COMMAND_NAME} [-status]`],
             example: [
                `${COMMAND_NAME}`,
@@ -38,7 +38,7 @@ export default class AntinukesToggleCommand extends BaseCommand {
       if(args.status){
          let embed = new Embed();
          embed.setColor(EmbedColors.MAIN)
-         embed.setTitle(`Antinukes Status ${serverData.Modules.AntiNuker.Enabled === true ? DiscordEmojis.ON : DiscordEmojis.OFF}`)
+         embed.setTitle(`Antinuke Status ${serverData.Modules.AntiNuker.Enabled === true ? DiscordEmojis.ON : DiscordEmojis.OFF}`)
          embed.setFooter(`El sistema esta actualmente ${serverData.Modules.AntiNuker.Enabled === true ? 'encendido' : 'apagado'}`)
          let disabledEvents:string[] = [];
          let enabledEvents:string[] = [];
@@ -55,7 +55,7 @@ export default class AntinukesToggleCommand extends BaseCommand {
       await Model.findOneAndUpdate(
          { ServerID: context.guildId },{ $set: { [`Modules.AntiNuker.Enabled`]: (serverData.Modules.AntiNuker.Enabled === true ? false : true) },
          })
-       return context.editOrReply(`El sistema Antinukes ha sido ${serverData.Modules.AntiNuker.Enabled === true ? 'desactivado' : 'activado'}`)
+       return context.editOrReply(`El sistema Antinuke ha sido ${serverData.Modules.AntiNuker.Enabled === true ? 'desactivado' : 'activado'}`)
    }
    onSuccess(context: Command.Context){
       CacheCollection.loadData(context.guildId!)

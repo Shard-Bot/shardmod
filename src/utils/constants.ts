@@ -24,7 +24,17 @@ export const DiscordEmojis = Object.freeze({
    PREVIOUS: '<:previous:925098782767603714>',
    CANCEL: '<:cancel:925098803621687426>',
    ON: '<:onshard:913209782268203029>',
-   OFF: '<:offshard:913209821363335178>'
+   OFF: '<:offshard:913209821363335178>',
+   DOUBLE_ARROW: '<:doubleArrow:940036754197610496>',
+   MEMBER: '<:usercard:940035346056482837>',
+   SPACE: '<:space:939736637179588669>',
+   DOCUMENT: '<:reason:940036010446843936>',
+   MAIL: '<:mail:940036307328040970>',
+   CLOCK: '<:clock:940037795882352711>',
+   CHECK_NO: '<:cancel:940043720118665316>',
+   CHECK: '<:check:940043558583422997>',
+   BLOCKUSER: '<:blockuser:940043468753993748>',
+   SERVER: '<:server:940336924160327762>'
 });
 
 export const EmbedColors = Object.freeze({
@@ -139,7 +149,8 @@ export const BotModules = [
 export const BotLogs = [
    'ExitLog',
    'JoinLog',
-   'ModLog'
+   'ModLog',
+   'BotLog'
 ]
 
 export const AntiNukesModules = {

@@ -69,6 +69,14 @@ export default class logAddCommand extends BaseCommand {
                      })
                 return context.editOrReply(`Canal \`${target.name}\` fue correctamente establecido en el evento ModLog`)
           break;
+          case "botactions":
+          case "botlogs":
+              if(document.Channels.BotLog === target.id) return context.editOrReply('El Canal ya se encuentra establecido en este evento')
+               await Model.findOneAndUpdate(
+                     { ServerID: context.guildId },{ $set: { [`Channels.BotLog`]: target.id },
+                     })
+                return context.editOrReply(`Canal \`${target.name}\` fue correctamente establecido en el evento BotLog`)
+          break;
           case "all":
               const success:string[] = []
               for(const _module of BotLogs){
