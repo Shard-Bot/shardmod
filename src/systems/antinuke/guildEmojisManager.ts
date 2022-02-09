@@ -25,6 +25,7 @@ class GuildEmojiCreate extends Collections.BaseCollection<string, number> {
 								.ban({ reason: '[Antinuke] Usuario excedio el limite de emojis creados.' })
 								.then(() => {
 									let memberDm: boolean = true;
+									if (executor.bot) memberDm = false;
 									executor
 										.createMessage({
 											embeds: [
@@ -35,23 +36,25 @@ class GuildEmojiCreate extends Collections.BaseCollection<string, number> {
 												),
 											],
 										})
-										.catch(() => (memberDm = false));
-									const channelId = serverData.Channels.BotLog;
-									if (channelId.length && payload.guild.channels.has(channelId)) {
-										payload.guild.channels
-											.get(channelId)
-											.createMessage({
-												embeds: [
-													baseManager.succesMessage(
-														executor,
-														Math.floor(Date.now() / 1000),
-														'Usuario excedio el limite de emojis creados en un corto periodo de tiempo.',
-														memberDm
-													),
-												],
-											})
-											.catch(() => null);
-									}
+										.catch(() => (memberDm = false))
+										.then(() => {
+											const channelId = serverData.Channels.BotLog;
+											if (channelId.length && payload.guild.channels.has(channelId)) {
+												payload.guild.channels
+													.get(channelId)
+													.createMessage({
+														embeds: [
+															baseManager.succesMessage(
+																executor,
+																Math.floor(Date.now() / 1000),
+																'Usuario excedio el limite de emojis creados en un corto periodo de tiempo.',
+																memberDm
+															),
+														],
+													})
+													.catch(() => null);
+											}
+										});
 								})
 								.catch(() => null);
 							this.delete(`${payload.guildId}.${executor.id}`);
@@ -104,6 +107,7 @@ class GuildEmojiDelete extends Collections.BaseCollection<string, number> {
 								})
 								.then(() => {
 									let memberDm: boolean = true;
+									if (executor.bot) memberDm = false;
 									executor
 										.createMessage({
 											embeds: [
@@ -114,24 +118,25 @@ class GuildEmojiDelete extends Collections.BaseCollection<string, number> {
 												),
 											],
 										})
-										.catch(() => (memberDm = false));
-									if (executor.bot) memberDm = false;
-									const channelId = serverData.Channels.BotLog;
-									if (channelId.length && payload.guild.channels.has(channelId)) {
-										payload.guild.channels
-											.get(channelId)
-											.createMessage({
-												embeds: [
-													baseManager.succesMessage(
-														executor,
-														Math.floor(Date.now() / 1000),
-														'Usuario excedio el limite de emojis eliminados en un corto periodo de tiempo.',
-														memberDm
-													),
-												],
-											})
-											.catch(() => null);
-									}
+										.catch(() => (memberDm = false))
+										.then(() => {
+											const channelId = serverData.Channels.BotLog;
+											if (channelId.length && payload.guild.channels.has(channelId)) {
+												payload.guild.channels
+													.get(channelId)
+													.createMessage({
+														embeds: [
+															baseManager.succesMessage(
+																executor,
+																Math.floor(Date.now() / 1000),
+																'Usuario excedio el limite de emojis eliminados en un corto periodo de tiempo.',
+																memberDm
+															),
+														],
+													})
+													.catch(() => null);
+											}
+										});
 								})
 								.catch(() => null);
 							this.delete(`${payload.guildId}.${executor.id}`);

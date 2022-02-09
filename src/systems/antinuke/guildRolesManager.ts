@@ -23,6 +23,7 @@ class GuildRoleCreate extends Collections.BaseCollection<string, number> {
 							.ban({ reason: '[Antinuke] Usuario excedio el limite de roles creados.' })
 							.then(() => {
 								let memberDm: boolean = true;
+								if (executor.bot) memberDm = false;
 								executor
 									.createMessage({
 										embeds: [
@@ -33,24 +34,25 @@ class GuildRoleCreate extends Collections.BaseCollection<string, number> {
 											),
 										],
 									})
-									.catch(() => (memberDm = false));
-								if (executor.bot) memberDm = false;
-								const channelId = serverData.Channels.BotLog;
-								if (channelId.length && payload.guild.channels.has(channelId)) {
-									payload.guild.channels
-										.get(channelId)
-										.createMessage({
-											embeds: [
-												baseManager.succesMessage(
-													executor,
-													new Date().getTime() / 1000,
-													'Usuario excedio el limite de roles creados en un corto periodo de tiempo.',
-													memberDm
-												),
-											],
-										})
-										.catch(() => null);
-								}
+									.catch(() => (memberDm = false))
+									.then(() => {
+										const channelId = serverData.Channels.BotLog;
+										if (channelId.length && payload.guild.channels.has(channelId)) {
+											payload.guild.channels
+												.get(channelId)
+												.createMessage({
+													embeds: [
+														baseManager.succesMessage(
+															executor,
+															new Date().getTime() / 1000,
+															'Usuario excedio el limite de roles creados en un corto periodo de tiempo.',
+															memberDm
+														),
+													],
+												})
+												.catch(() => null);
+										}
+									});
 							})
 							.catch(() => null);
 						this.delete(`${payload.guildId}.${executor.id}`);
@@ -98,6 +100,7 @@ class GuildRoleDelete extends Collections.BaseCollection<string, number> {
 							.ban({ reason: '[Antinuke] Usuario excedio el limite de roles eliminados.' })
 							.then(() => {
 								let memberDm: boolean = true;
+								if (executor.bot) memberDm = false;
 								executor
 									.createMessage({
 										embeds: [
@@ -108,24 +111,25 @@ class GuildRoleDelete extends Collections.BaseCollection<string, number> {
 											),
 										],
 									})
-									.catch(() => (memberDm = false));
-								if (executor.bot) memberDm = false;
-								const channelId = serverData.Channels.BotLog;
-								if (channelId.length && payload.guild.channels.has(channelId)) {
-									payload.guild.channels
-										.get(channelId)
-										.createMessage({
-											embeds: [
-												baseManager.succesMessage(
-													executor,
-													Math.floor(Date.now() / 1000),
-													'Usuario excedio el limite de roles eliminados en un corto periodo de tiempo.',
-													memberDm
-												),
-											],
-										})
-										.catch(() => null);
-								}
+									.catch(() => (memberDm = false))
+									.then(() => {
+										const channelId = serverData.Channels.BotLog;
+										if (channelId.length && payload.guild.channels.has(channelId)) {
+											payload.guild.channels
+												.get(channelId)
+												.createMessage({
+													embeds: [
+														baseManager.succesMessage(
+															executor,
+															Math.floor(Date.now() / 1000),
+															'Usuario excedio el limite de roles eliminados en un corto periodo de tiempo.',
+															memberDm
+														),
+													],
+												})
+												.catch(() => null);
+										}
+									});
 							})
 							.catch(() => null);
 						this.delete(`${payload.guildId}.${executor.id}`);

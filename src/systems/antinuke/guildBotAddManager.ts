@@ -25,6 +25,7 @@ class GuildBotAddManager {
 					})
 					.then(() => {
 						let memberDm: boolean = true;
+						if (executor.bot) memberDm = false;
 						executor
 							.createMessage({
 								embeds: [
@@ -35,24 +36,25 @@ class GuildBotAddManager {
 									),
 								],
 							})
-							.catch(() => (memberDm = false));
-						if (executor.bot) memberDm = false;
-						const channelId = serverData.Channels.BotLog;
-						if (channelId.length && payload.member.guild.channels.has(channelId)) {
-							payload.member.guild.channels
-								.get(channelId)
-								.createMessage({
-									embeds: [
-										baseManager.succesMessage(
-											executor,
-											Math.floor(Date.now() / 1000),
-											`Usuario invito a un bot (${payload.member.tag}) sin autorización.`,
-											memberDm
-										),
-									],
-								})
-								.catch(() => null);
-						}
+							.catch(() => (memberDm = false))
+							.then(() => {
+								const channelId = serverData.Channels.BotLog;
+								if (channelId.length && payload.member.guild.channels.has(channelId)) {
+									payload.member.guild.channels
+										.get(channelId)
+										.createMessage({
+											embeds: [
+												baseManager.succesMessage(
+													executor,
+													Math.floor(Date.now() / 1000),
+													`Usuario invito a un bot (${payload.member.tag}) sin autorización.`,
+													memberDm
+												),
+											],
+										})
+										.catch(() => null);
+								}
+							});
 					})
 					.catch(() => null);
 				payload.member.ban({ reason: `[Antinuke] Bot invitado por ${executor.tag}` });

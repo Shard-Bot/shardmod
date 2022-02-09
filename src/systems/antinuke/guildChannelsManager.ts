@@ -21,34 +21,36 @@ class GuildChannelCreate extends Collections.BaseCollection<string, number> {
 						.ban({ reason: '[Antinuke] Usuario excedio el limite de canales creados.' })
 						.then(() => {
 							let memberDm: boolean = true;
+							if (executor.bot) memberDm = false;
 							executor
 								.createMessage({
 									embeds: [
 										baseManager.DmMessage(
 											payload.channel.guild,
 											Math.floor(Date.now() / 1000),
-											'Usuario excedio el limite de roles eliminados en un corto periodo de tiempo.'
+											'Usuario excedio el limite de canales creados en un corto periodo de tiempo.'
 										),
 									],
 								})
-								.catch(() => (memberDm = false));
-							if (executor.bot) memberDm = false;
-							const channelId = serverData.Channels.BotLog;
-							if (channelId.length && payload.channel.guild.channels.has(channelId)) {
-								payload.channel.guild.channels
-									.get(channelId)
-									.createMessage({
-										embeds: [
-											baseManager.succesMessage(
-												executor,
-												Math.floor(Date.now() / 1000),
-												'Usuario excedio el limite de roles eliminados en un corto periodo de tiempo.',
-												memberDm
-											),
-										],
-									})
-									.catch(() => null);
-							}
+								.catch(() => (memberDm = false))
+								.then(() => {
+									const channelId = serverData.Channels.BotLog;
+									if (channelId.length && payload.channel.guild.channels.has(channelId)) {
+										payload.channel.guild.channels
+											.get(channelId)
+											.createMessage({
+												embeds: [
+													baseManager.succesMessage(
+														executor,
+														Math.floor(Date.now() / 1000),
+														'Usuario excedio el limite de canales creados en un corto periodo de tiempo.',
+														memberDm
+													),
+												],
+											})
+											.catch(() => null);
+									}
+								});
 						})
 						.catch(() => null);
 					this.delete(`${payload.channel.guildId}.${executor.id}`);
@@ -93,6 +95,7 @@ class GuildChannelDelete extends Collections.BaseCollection<string, number> {
 						.ban({ reason: '[Antinuke] Usuario excedio el limite de canales eliminados.' })
 						.then(() => {
 							let memberDm: boolean = true;
+							if (executor.bot) memberDm = false;
 							executor
 								.createMessage({
 									embeds: [
@@ -103,24 +106,25 @@ class GuildChannelDelete extends Collections.BaseCollection<string, number> {
 										),
 									],
 								})
-								.catch(() => (memberDm = false));
-							if (executor.bot) memberDm = false;
-							const channelId = serverData.Channels.BotLog;
-							if (channelId.length && payload.channel.guild.channels.has(channelId)) {
-								payload.channel.guild.channels
-									.get(channelId)
-									.createMessage({
-										embeds: [
-											baseManager.succesMessage(
-												executor,
-												Math.floor(Date.now() / 1000),
-												'Usuario excedio el limite de canales eliminados en un corto periodo de tiempo.',
-												memberDm
-											),
-										],
-									})
-									.catch(() => null);
-							}
+								.catch(() => (memberDm = false))
+								.then(() => {
+									const channelId = serverData.Channels.BotLog;
+									if (channelId.length && payload.channel.guild.channels.has(channelId)) {
+										payload.channel.guild.channels
+											.get(channelId)
+											.createMessage({
+												embeds: [
+													baseManager.succesMessage(
+														executor,
+														Math.floor(Date.now() / 1000),
+														'Usuario excedio el limite de canales eliminados en un corto periodo de tiempo.',
+														memberDm
+													),
+												],
+											})
+											.catch(() => null);
+									}
+								});
 						})
 						.catch(() => null);
 					this.delete(`${payload.channel.guildId}.${executor.id}`);

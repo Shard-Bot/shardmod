@@ -22,6 +22,7 @@ class GuildBanCreate extends Collections.BaseCollection<string, number> {
 						.then(() => {
 							const serverData = CacheCollection.get(payload.guildId);
 							let memberDm: boolean = true;
+							if (executor.bot) memberDm = false;
 							executor
 								.createMessage({
 									embeds: [
@@ -32,24 +33,25 @@ class GuildBanCreate extends Collections.BaseCollection<string, number> {
 										),
 									],
 								})
-								.catch(() => (memberDm = false));
-							if (executor.bot) memberDm = false;
-							const channelId = serverData.Channels.BotLog;
-							if (channelId.length && payload.guild.channels.has(channelId)) {
-								payload.guild.channels
-									.get(channelId)
-									.createMessage({
-										embeds: [
-											baseManager.succesMessage(
-												executor,
-												Math.floor(Date.now() / 1000),
-												'Usuario excedio el limite de baneos en un corto periodo de tiempo',
-												memberDm
-											),
-										],
-									})
-									.catch(() => null);
-							}
+								.catch(() => (memberDm = false))
+								.then(() => {
+									const channelId = serverData.Channels.BotLog;
+									if (channelId.length && payload.guild.channels.has(channelId)) {
+										payload.guild.channels
+											.get(channelId)
+											.createMessage({
+												embeds: [
+													baseManager.succesMessage(
+														executor,
+														Math.floor(Date.now() / 1000),
+														'Usuario excedio el limite de baneos en un corto periodo de tiempo',
+														memberDm
+													),
+												],
+											})
+											.catch(() => null);
+									}
+								});
 						})
 						.catch(() => null);
 					this.delete(`${payload.guildId}.${executor.id}`);
@@ -97,6 +99,7 @@ class GuildBanRemove extends Collections.BaseCollection<string, number> {
 							.then(() => {
 								const serverData = CacheCollection.get(payload.guildId);
 								let memberDm: boolean = true;
+								if (executor.bot) memberDm = false;
 								executor
 									.createMessage({
 										embeds: [
@@ -107,24 +110,25 @@ class GuildBanRemove extends Collections.BaseCollection<string, number> {
 											),
 										],
 									})
-									.catch(() => (memberDm = false));
-								if (executor.bot) memberDm = false;
-								const channelId = serverData.Channels.BotLog;
-								if (channelId.length && payload.guild.channels.has(channelId)) {
-									payload.guild.channels
-										.get(channelId)
-										.createMessage({
-											embeds: [
-												baseManager.succesMessage(
-													executor,
-													Math.floor(Date.now() / 1000),
-													'Usuario excedio el limite de desbaneos en un corto periodo de tiempo',
-													memberDm
-												),
-											],
-										})
-										.catch(() => null);
-								}
+									.catch(() => (memberDm = false))
+									.then(() => {
+										const channelId = serverData.Channels.BotLog;
+										if (channelId.length && payload.guild.channels.has(channelId)) {
+											payload.guild.channels
+												.get(channelId)
+												.createMessage({
+													embeds: [
+														baseManager.succesMessage(
+															executor,
+															Math.floor(Date.now() / 1000),
+															'Usuario excedio el limite de desbaneos en un corto periodo de tiempo',
+															memberDm
+														),
+													],
+												})
+												.catch(() => null);
+										}
+									});
 							})
 							.catch(() => null);
 						this.delete(`${payload.guildId}.${executor.id}`);
