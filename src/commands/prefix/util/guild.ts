@@ -100,17 +100,17 @@ export default class ServerCommand extends BaseCommand {
 
       embed.addField(
          '**Características**',
-         `\`\`\`${guild.features
+         `\`\`\`\n${guild.features.toArray().length ? guild.features
             .toArray()
             .sort()
             .map((feature: string) => clearString(feature))
-            .join(', ')}\`\`\``,
+            .join(', ') : 'Sin Características'}\`\`\``,
          true
       );
 
       embed.addField(
          '**Proiedades**',
-         `\`\`\`js\nCanales: ${channelsBase.size}\n• Texto: ${textchannels.length}\n• Voz: ${voicechannels.length}\n• Anuncios: ${newschannels.length}\nEmojis: ${emojisBase.size}\n• Animados ${animated.length}\n• Estaticos: ${normal.length}\nStickers: ${guild.stickers.size}\nRoles: ${guild.roles.size}\`\`\``,
+         `\`\`\`js\n ​\nCanales: ${channelsBase.size}\n• Texto: ${textchannels.length}\n• Voz: ${voicechannels.length}\n• Anuncios: ${newschannels.length}\nEmojis: ${emojisBase.size}\n• Animados ${animated.length}\n• Estaticos: ${normal.length}\nStickers: ${guild.stickers.size}\nRoles: ${guild.roles.size}\`\`\``,
          true
       );
       //imagenes y footer lol
