@@ -7,7 +7,7 @@ import 'reflect-metadata';
 import CacheCollection from './cache/CacheCollection';
 import './cache/index';
 import { ShardBotCommandClient } from './commandClient';
-import './systems/antinuke/index'
+import './systems/index'
 
 (async () => {
 

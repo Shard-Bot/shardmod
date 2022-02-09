@@ -74,8 +74,8 @@ export const defaultData = (guildId: string) => ({
 
         Lockdown: {
             Enabled: false,
-            Mode: '',
-            Target: '',
+            Mode: 'mute',
+            Target: 'alts',
         },
 
         Automod: {
