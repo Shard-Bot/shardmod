@@ -38,7 +38,7 @@ export class BaseCommand<ParsedArgsFinished = Command.ParsedArgs> extends Comman
     for (const key in errors) {
       const message = errors[key].message;
       if (message in store) {
-        description.push(`**${key}**: Igual a **${store[message]}**`);
+        description.push(`**${key}**: Igual que **${store[message]}**`);
       } else {
         description.push(`**${key}**: ${message}`);
       }
