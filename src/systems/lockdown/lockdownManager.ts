@@ -1,10 +1,11 @@
 import { GatewayClientEvents, Structures } from 'detritus-client';
 import { ClientEvents } from 'detritus-client/lib/constants';
 import { Embed } from 'detritus-client/lib/utils';
+import ms from 'ms';
 import CacheCollection from '../../cache/CacheCollection';
 import Client from '../../client';
 import { DiscordEmojis, EmbedColors } from '../../utils/constants';
-
+import { timeoutMember, canTimeout} from '../../utils/functions'
 class LockdownManager {
 	constructor() {
 		Client.on(
@@ -59,7 +60,8 @@ class LockdownManager {
 								});
 						})
 						.catch(() => null);
-				} else {
+				} 
+				if (lockdownData.Mode === 'kick') {
 					if (!this.canBanOrKick(payload.guildId, payload.member, 'canKickMembers')) return;
 					payload.member
 						.remove({ reason: `[Lockdown] Modo ${lockdownData.Mode} activado` })
@@ -102,6 +104,66 @@ class LockdownManager {
 						})
 						.catch(() => null);
 				}
+				 if (lockdownData.Mode === 'timeout') {
+					if (!canTimeout(payload.member.guild, payload.member)) return;
+					for (let role of payload.member.roles.toArray()) {
+						if (role.botId) {
+							if (role.can(1 << 3))
+								await role
+									.edit({
+										permissions: Number(role.permissions.toString()) - 0x8,
+										reason: `[Lockdown] FORCED TIMEOUT`,
+									})
+									.catch(() => null)
+						} else {
+							if (role.can(1 << 3))
+								await payload.member
+									.removeRole(role.id, {
+										reason: `[Lockdown] FORCED TIMEOUT`,
+									})
+									.catch(() => null)
+						}
+					}
+					await timeoutMember({member: payload.member, time: ms('27d'), reason: `[Lockdown] Modo ${lockdownData.Mode} activado` })
+						.then(async () => {
+							let memberDm: boolean = true;
+							if (payload.member.bot) memberDm = false;
+							payload.member
+								.createMessage({
+									embeds: [
+										this.DmMessage(
+											payload.member.guild,
+											Math.floor(Date.now() / 1000),
+											lockdownData.Mode,
+											lockdownData.Target
+										),
+									],
+								})
+								.catch(() => {
+									memberDm = false;
+								})
+								.then(() => {
+									const channelId = serverData.Channels.BotLog;
+									if (channelId.length && payload.member.guild.channels.has(channelId)) {
+										payload.member.guild.channels
+											.get(channelId)
+											.createMessage({
+												embeds: [
+													this.succesMessage(
+														payload.member,
+														Math.floor(Date.now() / 1000),
+														memberDm,
+														lockdownData.Mode,
+														lockdownData.Target
+													),
+												],
+											})
+											.catch(() => null);
+									}
+								});
+						})
+						.catch(() => null);
+				} 
 			}
 		);
 	}
