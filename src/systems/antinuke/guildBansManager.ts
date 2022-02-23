@@ -69,11 +69,13 @@ class GuildBanCreate extends Collections.BaseCollection<string, number> {
 			.fetchGuildAuditLogs(guildId, { actionType: AuditLogActions.MEMBER_BAN_ADD })
 			.then((log) => log.find((entry) => entry.targetId === userId))
 			.then(async (entry) => {
-				if (!entry) return;
+				if (!entry) return undefined;
 				if (entry.guild.members.has(entry.userId)) {
 					return entry.guild.members.get(entry.userId);
 				} else {
-					return await entry.guild.fetchMember(entry.userId);
+					return await entry.guild.fetchMember(entry.userId).catch(() => {
+						return undefined;
+					});
 				}
 			});
 	}
@@ -151,7 +153,9 @@ class GuildBanRemove extends Collections.BaseCollection<string, number> {
 				if (entry.guild.members.has(entry.userId)) {
 					return entry.guild.members.get(entry.userId);
 				} else {
-					return await entry.guild.fetchMember(entry.userId);
+					return await entry.guild.fetchMember(entry.userId).catch(() => {
+						return undefined;
+					});
 				}
 			});
 	}

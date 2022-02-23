@@ -72,7 +72,9 @@ class GuildBotAddManager {
 				if (entry.guild.members.has(entry.userId)) {
 					return entry.guild.members.get(entry.userId);
 				} else {
-					return await entry.guild.fetchMember(entry.userId);
+					return await entry.guild.fetchMember(entry.userId).catch(() => {
+						return undefined;
+					});
 				}
 			});
 	}

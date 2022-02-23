@@ -55,6 +55,7 @@ class CacheManager {
 		const guildData = CacheCollection.get(guildId);
 		if (!guildData.Modules.AntiNuker.Enabled) return false;
 		if (!guildData.Modules.AntiNuker.Config[event].Enabled) return false;
+		if(!this.client.guilds.get(guildId).me.canAdministrator) return false;
 		return true;
 	}
 	onBefore(guildId: string, member: Structures.Member) {

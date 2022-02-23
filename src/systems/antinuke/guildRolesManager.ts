@@ -71,11 +71,13 @@ class GuildRoleCreate extends Collections.BaseCollection<string, number> {
 			.fetchGuildAuditLogs(guildId, { actionType: AuditLogActions.ROLE_CREATE })
 			.then((log) => log.find((entry) => entry.targetId === roleId))
 			.then(async (entry) => {
-				if (!entry) return;
+				if (!entry) return undefined;
 				if (entry.guild.members.has(entry.userId)) {
 					return entry.guild.members.get(entry.userId);
 				} else {
-					return await entry.guild.fetchMember(entry.userId);
+					return await entry.guild.fetchMember(entry.userId).catch(() => {
+						return undefined;
+					});
 				}
 			});
 	}
@@ -148,11 +150,13 @@ class GuildRoleDelete extends Collections.BaseCollection<string, number> {
 			.fetchGuildAuditLogs(guildId, { actionType: AuditLogActions.ROLE_DELETE })
 			.then((log) => log.find((entry) => entry.targetId === roleId))
 			.then(async (entry) => {
-				if (!entry) return;
+				if (!entry) return undefined; 
 				if (entry.guild.members.has(entry.userId)) {
 					return entry.guild.members.get(entry.userId);
 				} else {
-					return await entry.guild.fetchMember(entry.userId);
+					return await entry.guild.fetchMember(entry.userId).catch(() => {
+						return undefined;
+					});
 				}
 			});
 	}
