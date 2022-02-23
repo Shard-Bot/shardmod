@@ -34,13 +34,18 @@ export const DiscordEmojis = Object.freeze({
    CHECK_NO: '<:cancel:940043720118665316>',
    CHECK: '<:check:940043558583422997>',
    BLOCKUSER: '<:blockuser:940043468753993748>',
-   SERVER: '<:server:940336924160327762>'
+   SERVER: '<:server:940336924160327762>',
+   TIMEOUT: '<:timeoutshard:941892587961323571>',
+   CONFIRM: '<:confirm:944027411731873842>',
+   RETURN: '<:return:944026997431091231>',
+   CHAT: '<:chat:940038402466803784>'
 });
 
 export const EmbedColors = Object.freeze({
    MAIN: 41704,
    ERROR: 16071997,
    SUCCESS: 8123709,
+   BLANK: 3092790
 });
 
 export const PERMISSIONS = Object.freeze([

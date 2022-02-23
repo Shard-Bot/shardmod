@@ -3,7 +3,6 @@ import { DiscordAbortCodes, Permissions } from 'detritus-client/lib/constants';
 import { PermissionTools } from 'detritus-client/lib/utils';
 import { DiscordRegex } from 'detritus-client/lib/constants';
 import { defaultData, Model } from '../schemas/serverconfig';
-import CacheCollection from '../cache/CacheCollection';
 
 export function isSnowflake(value: string): boolean {
   if (![16, 17, 18].includes(value.length) || isNaN(parseInt(value))) {
@@ -132,4 +131,20 @@ export function clearString(value: string): string {
 export async function createData(guildId: string) {
   const data = await Model.create(defaultData(guildId));
   return data.toObject()
+}
+
+export async function timeoutMember(args: { member: Structures.Member; reason: string; time?: number }) {
+	if (args.time) {
+		args.member.edit({
+			communicationDisabledUntil: new Date(Date.now() + args.time).toISOString(),
+			reason: args.reason,
+		});
+	} else {
+		args.member.edit({ communicationDisabledUntil: null, reason: args.reason });
+	}
+}
+
+export function canTimeout(guild: Structures.Guild, member: Structures.Member) {
+	if (guild.me.canEdit(member) && guild.me.can(1 << 40)) return true;
+	return false;
 }
