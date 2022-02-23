@@ -86,7 +86,7 @@ export default class LockdownToggleCommand extends BaseCommand {
 			);
 		}
 		if (args.mode) {
-			if (!['ban', 'kick'].includes(args.mode.toLowerCase()))
+			if (!['ban', 'kick', 'mute', 'timeout'].includes(args.mode.toLowerCase()))
 				return context.editOrReply('⚠ | Especifica una accion valida');
 			if (serverData.Modules.Lockdown.Mode === args.mode.toLowerCase())
 				return context.editOrReply('⚠ | Ese modo ya se encuentra establecido');
@@ -94,11 +94,11 @@ export default class LockdownToggleCommand extends BaseCommand {
 				{ ServerID: context.guildId },
 				{
 					$set: {
-						[`Modules.Lockdown.Mode`]: args.mode.toLowerCase(),
+						[`Modules.Lockdown.Mode`]: args.mode.toLowerCase() === 'mute' ? 'timeout' : args.mode.toLowerCase(),
 					},
 				}
 			);
-			return context.editOrReply(`El modo se ha cambiado a \`${args.mode}\``);
+			return context.editOrReply(`El modo se ha cambiado a \`${args.mode.toLowerCase()}\``);
 		}
 		if (args.target) {
 			if (!['all', 'alts', 'bots'].includes(args.target.toLowerCase()))
@@ -115,8 +115,5 @@ export default class LockdownToggleCommand extends BaseCommand {
 			);
 			return context.editOrReply(`El objetivo se ha cambiado a \`${args.target}\``);
 		}
-	}
-	onSuccess(context: Command.Context) {
-		CacheCollection.loadData(context.guildId!);
 	}
 }

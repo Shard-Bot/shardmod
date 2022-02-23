@@ -57,7 +57,4 @@ export default class AntinukesToggleCommand extends BaseCommand {
          })
        return context.editOrReply(`El sistema Antinuke ha sido ${serverData.Modules.AntiNuker.Enabled === true ? 'desactivado' : 'activado'}`)
    }
-   onSuccess(context: Command.Context){
-      CacheCollection.loadData(context.guildId!)
-   }
 }

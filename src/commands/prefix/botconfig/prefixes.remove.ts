@@ -42,7 +42,4 @@ export default class prefixSetCommand extends BaseCommand {
         })
       return context.editOrReply(`El prefix \`${args.prefix}\` fue removido de la lista de prefixes del servidor`)
    }
-   onSuccess(context: Command.Context){
-      CacheCollection.loadData(context.guildId!)
-   }
 }

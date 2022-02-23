@@ -77,7 +77,4 @@ export default class logDeleteCommand extends BaseCommand {
             return context.editOrReply('Especifica un modulo valido');
       }
    }
-   onSuccess(context: Command.Context){
-      CacheCollection.loadData(context.guildId!)
-   }
 }

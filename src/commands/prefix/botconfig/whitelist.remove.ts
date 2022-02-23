@@ -326,7 +326,4 @@ export default class WhitelistaddCommand extends BaseCommand {
             break;
       }
    }
-   onSuccess(context: Command.Context){
-      CacheCollection.loadData(context.guildId!)
-   }
 }

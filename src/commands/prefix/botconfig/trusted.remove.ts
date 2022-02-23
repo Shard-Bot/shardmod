@@ -55,7 +55,4 @@ export default class TrustedRemoveCommand extends BaseCommand {
          `El Miembro ${target.user.tag} fue removido de la lista trusted del servidor`
       );
    }
-   onSuccess(context: Command.Context){
-      CacheCollection.loadData(context.guildId!)
-   }
 }

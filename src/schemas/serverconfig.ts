@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import { ServerConfig } from '../utils/types';
-
+import CacheCollection from '../cache/CacheCollection';
 export const defaultData = (guildId: string) => ({
     ServerID: guildId,
     Prefixes: [],
@@ -279,4 +279,11 @@ const Schema = new mongoose.Schema({
     }
 }, {versionKey: false})
 
-export const Model = mongoose.model<ServerConfig>("ServerConfig", Schema) 
+export const Model = mongoose.model<ServerConfig>("ServerConfig", Schema)
+
+const changeStream = Model.watch();
+
+changeStream.on('change', async (payload) => {
+	const changedDoc = await Model.findOne({ _id: payload.documentKey });
+	CacheCollection.set(changedDoc.ServerID, changedDoc);
+});

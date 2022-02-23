@@ -4,6 +4,7 @@ import { BaseCommand } from '../basecommand';
 import { BotLogs, EmbedColors } from '../../../utils/constants';
 import CacheCollection from '../../../cache/CacheCollection';
 import { Embed } from 'detritus-client/lib/utils';
+import { clearString } from '../../../utils/functions';
 export const COMMAND_NAME = 'log show';
 
 
@@ -30,9 +31,9 @@ export default class logShowCommand extends BaseCommand {
       embed.setColor(EmbedColors.MAIN)
       for(const _module of BotLogs){
          if(document.Channels[_module].length){
-            embed.addField(_module, `• <#${document.Channels[_module]}>`, true)
+            embed.addField(clearString(_module), `• <#${document.Channels[_module]}>`, true)
          } else {
-            embed.addField(_module, '`Sin Establecer`', true)
+            embed.addField(clearString(_module), '`Sin Establecer`', true)
          }
       }
       return context.editOrReply({embeds: [embed]})

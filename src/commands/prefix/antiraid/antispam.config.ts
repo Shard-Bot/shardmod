@@ -122,6 +122,7 @@ export default class AntinukesConfigCommand extends BaseCommand {
       }
 
       if(args.percenttimelimit){
+         if(!serverData.Modules[module].PercentTimeLimit) return context.editOrReply('⚠ | No puedes establecer el valor `PercentTimeLimit` en este modulo')
          const stime = ms(args.percenttimelimit) / 1000.0
          if(isNaN(stime) || Number.isInteger(stime)) return context.editOrReply('⚠ | Establece un tiempo valido: Ejemplos: `1m • 10s • 30m`')
          if(stime  > 3600) return context.editOrReply('⚠ | La duración no puede execer 1h')
@@ -132,8 +133,5 @@ export default class AntinukesConfigCommand extends BaseCommand {
              })
            return context.editOrReply(`El Limite de \`${module}\` se ha establecido a \`${args.percenttimelimit}\` (${stime} segundos)`)
        }
-   }
-   onSuccess(context: Command.Context){
-      CacheCollection.loadData(context.guildId!)
    }
 }

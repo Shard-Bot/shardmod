@@ -52,7 +52,4 @@ export default class TrustedAddCommand extends BaseCommand {
          `El Miembro ${target.user.tag} fue añadido a la lista trusted del servidor`
       );
    }
-   onSuccess(context: Command.Context){
-      CacheCollection.loadData(context.guildId!)
-   }
 }

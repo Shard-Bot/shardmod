@@ -64,7 +64,4 @@ export default class LockdownToggleCommand extends BaseCommand {
 			}`
 		);
 	}
-	onSuccess(context: Command.Context) {
-		CacheCollection.loadData(context.guildId!);
-	}
 }

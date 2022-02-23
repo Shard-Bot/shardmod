@@ -1,5 +1,4 @@
-import { Collections, ShardClient } from 'detritus-client';
-import mongoose from 'mongoose';
+import { Collections } from 'detritus-client';
 
 import { Model } from '../schemas/serverconfig';
 import Client from '../client';
@@ -31,11 +30,6 @@ export class cacheClass extends Collections.BaseCollection<string, ServerConfig>
 		}
 
 		console.log(`Cache Cargada (${this.size}/${this.client.guilds.size} Servidores) en ${Date.now() - start}`);
-	}
-	async loadData(guildId: string){
-		const data = await Model.findOne({ServerID: guildId}).lean()
-		if(!data) return;
-		this.set(data.ServerID, data)
 	}
 	checkWhitelist(guildId: string, targetId: string, _module: string, _moduleType: string, document: ServerConfig) {
         return (document as any).Modules[_module].Whitelist[_moduleType].includes(targetId)

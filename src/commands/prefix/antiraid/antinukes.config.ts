@@ -180,7 +180,4 @@ export default class AntinukesConfigCommand extends BaseCommand {
 			);
 		}
 	}
-	onSuccess(context: Command.Context) {
-		CacheCollection.loadData(context.guildId!);
-	}
 }
