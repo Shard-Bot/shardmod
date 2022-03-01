@@ -6,6 +6,9 @@ export class BaseCommand<ParsedArgsFinished = Command.ParsedArgs> extends Comman
   permissionsIgnoreClientOwner = true;
   triggerTypingAfter = 2000;
 
+  onPermissionsFail(context: Command.Context) {
+		return context.editOrReply('⚠ | No tienes los permisos necesarios para ejecutar este comando')
+	}
   async onRatelimit(
     context: Command.Context,
     ratelimits: Array<Command.CommandRatelimitInfo>
