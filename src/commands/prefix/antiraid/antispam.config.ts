@@ -61,7 +61,7 @@ export default class AntinukesConfigCommand extends BaseCommand {
             if(data.Percent) description.push(`• Percent: \`${data.Percent}%\``)
             if(data.PercentTimeLimit) description.push(`• Percent Timeout: \`${data.PercentTimeLimit < 60 ? `${data.PercentTimeLimit}s` : `${data.PercentTimeLimit / 60}m`}\``)
             if(data.Words) description.push(`• Words: \`${data.Words.length}\``)
-            if(typeof data.AllowImages !== 'undefined') description.push(`• AllowImages?: \`${data.AllowImages === true ? 'Si' : 'No'}\``)
+            if(typeof data.AllowImages !== 'undefined') description.push(`• AllowImages: \`${data.AllowImages === true ? 'Si' : 'No'}\``)
             embed.addField(`[${Object.values(AntiSpamModules).indexOf(module) + 1}] ${module}`, description.join('\n'))
          } else {
             Object.values(AntiSpamModules).map((key: string, i: number) => {
@@ -72,7 +72,7 @@ export default class AntinukesConfigCommand extends BaseCommand {
                if(data.Percent) description.push(`• Percent: \`${data.Percent}%\``)
                if(data.PercentTimeLimit) description.push(`• Percent Timeout: \`${data.PercentTimeLimit < 60 ? `${data. PercentTimeLimit}s` : `${data.PercentTimeLimit / 60}m`}\``)
                if(data.Words) description.push(`• Words: \`${data.Words.length}\``)
-               if(typeof data.AllowImages !== 'undefined') description.push(`• AllowImages?: \`${data.AllowImages === true ? 'Si' : 'No'}\``)
+               if(typeof data.AllowImages !== 'undefined') description.push(`• AllowImages: \`${data.AllowImages === true ? 'Si' : 'No'}\``)
             embed.addField(`[${i + 1}] ${key}`, description.join('\n'), (i + 1) === 3 ? false : true)
             })
          }

@@ -60,8 +60,7 @@ class LockdownManager {
 								});
 						})
 						.catch(() => null);
-				} 
-				if (lockdownData.Mode === 'kick') {
+				} else if (lockdownData.Mode === 'kick') {
 					if (!this.canBanOrKick(payload.guildId, payload.member, 'canKickMembers')) return;
 					payload.member
 						.remove({ reason: `[Lockdown] Modo ${lockdownData.Mode} activado` })
@@ -103,8 +102,7 @@ class LockdownManager {
 								});
 						})
 						.catch(() => null);
-				}
-				 if (lockdownData.Mode === 'timeout') {
+				} else if (lockdownData.Mode === 'timeout') {
 					if (!canTimeout(payload.member.guild, payload.member)) return;
 					for (let role of payload.member.roles.toArray()) {
 						if (role.botId) {
@@ -240,7 +238,7 @@ class LockdownManager {
 				mode === 'ban' ? 'Baneado' : 'Expulsado'
 			}?:** ${DiscordEmojis.CHECK}\n${DiscordEmojis.SPACE} ${
 				DiscordEmojis.MAIL
-			} **Aviso al ejecutor?:** ${
+			} **Aviso al ejecutor:** ${
 				memberDm === false ? DiscordEmojis.CHECK_NO : DiscordEmojis.CHECK
 			}`
 		);

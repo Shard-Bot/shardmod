@@ -98,9 +98,9 @@ class CacheManager {
 		embed.addField('\u200b', `${DiscordEmojis.CLOCK} **Hora:** <t:${timestamp}:R>`);
 		embed.addField(
 			`Mas detalles:`,
-			`${DiscordEmojis.SPACE} ${DiscordEmojis.BLOCKUSER} **Ejecutor Baneado?:** ${
+			`${DiscordEmojis.SPACE} ${DiscordEmojis.BLOCKUSER} **Ejecutor Baneado:** ${
 				DiscordEmojis.CHECK
-			}\n${DiscordEmojis.SPACE} ${DiscordEmojis.MAIL} **Aviso al ejecutor?:** ${
+			}\n${DiscordEmojis.SPACE} ${DiscordEmojis.MAIL} **Aviso al ejecutor:** ${
 				memberDm ? DiscordEmojis.CHECK : DiscordEmojis.CHECK_NO
 			}`
 		);

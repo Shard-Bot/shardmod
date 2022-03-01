@@ -72,7 +72,7 @@ export default class MemberRemoveTimeoutCommand extends BaseCommand {
 			onAskingMessage: `**Quieres remover el asilamiento de ${member}?**`,
 			timeout: 10000,
 			onConfirm: async () => {
-				timeoutMember({ member: member, reason: reason });
+				timeoutMember({member: member, reason: reason});
 				await User.createMessage({ embeds: [embedDm] })
 					.catch(() => (memberDm = false))
 					.then(() => {
@@ -103,6 +103,7 @@ export default class MemberRemoveTimeoutCommand extends BaseCommand {
 	}
 	canTimeoutMembers(context: Command.Context, target: Structures.Member) {
 		if (target.isClientOwner || config.devsIds.includes(target.id)) return false;
+		if (CacheCollection.get(context.guildId).Users.Trusted.includes(context.member.id)) return true;
 		if (context.member.isClientOwner) return true;
 		if (context.member.can(1 << 40) && context.member.canEdit(target)) return true;
 		return false;
@@ -127,7 +128,7 @@ export default class MemberRemoveTimeoutCommand extends BaseCommand {
 					DiscordEmojis.CLOCK
 				} Fecha: <t:${Math.floor(Date.now() / 1000)}:R>\n${
 					DiscordEmojis.BLOCKUSER
-				} Usuario avisado?: ${memberDm ? DiscordEmojis.CHECK : DiscordEmojis.CHECK_NO}`
+				} Usuario avisado: ${memberDm ? DiscordEmojis.CHECK : DiscordEmojis.CHECK_NO}`
 			);
 			return context.guild.channels.get(channelId).createMessage({ embeds: [embed] });
 		}

@@ -11,7 +11,6 @@ import { Confirmation } from '../../../utils/confirm';
 
 export const COMMAND_NAME = 'ban';
 type param = {
-	hack: boolean;
 	user: string;
 	time: string;
 	reason: string;
@@ -27,7 +26,6 @@ export default class CreateGuildBan extends BaseCommand {
 			args: [
 				{ name: 'time', type: String, required: false, aliases: ['tiempo', 'duracion'] },
 				{ name: 'reason', type: String, required: false, aliases: ['razon'] },
-				{ name: 'hack', type: Boolean, required: false, aliases: ['h'] },
 				{ name: 'clear', type: Boolean, required: false, aliases: ['deletemessages'] },
 			],
 			label: 'user',
@@ -57,123 +55,60 @@ export default class CreateGuildBan extends BaseCommand {
 			(context.message.mentions.first() as Structures.Member) ||
 			(await getUserByText(context, args.user));
 		if (!User) return context.editOrReply('⚠ | No pude encontrar el usuario');
-		const isMember = User instanceof Structures.Member;
 		let member = User as Structures.Member;
-		if (await this.alreadyBanned(context, User.id))
-			return context.editOrReply(`⚠ | El usuario ya se encuentra baneado`);
-		let bantime: null | number = null;
-		if (args.time) {
-			const time = ms(args.time);
+		if(await this.alreadyBanned(context, User.id)) return context.editOrReply(`⚠ | El usuario ya se encuentra baneado`);
+		let bantime: null|number = null;
+		if(args.time){
+			const time = ms(args.time)
 			if (isNaN(time))
-				return context.editOrReply(`⚠ | Establece una duracion valida (\`Ejemplo: 5m, 1h\`)`);
-			if (time > 2629800000)
-				return context.editOrReply('⚠ | La duracion no puede exceder 30 dias');
-			if (time < 300000)
-				return context.editOrReply('⚠ | La duracion no puede ser menor a 5 minutos');
+			return context.editOrReply(`⚠ | Establece una duracion valida (\`Ejemplo: 5m, 1h\`)`);
+			if(time > 2629800000) return context.editOrReply('⚠ | La duracion no puede exceder 30 dias');
+			if(time < 300000) return context.editOrReply('⚠ | La duracion no puede ser menor a 5 minutos');
 			bantime = time;
 		}
-		if (args.hack && isMember)
+		if(User instanceof Structures.Member){
+			if (!context.guild.me.canEdit(member))
 			return context.editOrReply(
-				'⚠ | El parametro hack no puede ser usado contra miembros del servidor'
+				`⚠ | No tengo los permisos necesarios para banear a ${User.tag}`
 			);
-		if (!args.hack && !isMember)
-			return context.editOrReply(
-				'⚠ | No se encontro el miembro (Usa el parametro hack para banear usuarios que no esten en el servidor)'
-			);
-		if (!args.hack && !this.canBanMembers(context.member, member))
-			return context.editOrReply(
-				`⚠ | No tienes los permisos necesarios para banear a ${User.tag}`
-			);
+		}
 		let reason = args.reason?.length ? args.reason : 'No se dio razón';
 		if (reason.length > 513)
 			return context.editOrReply('⚠ | La razon no puede exeder los 512 caracteres');
 
-		let embedDm = new Embed();
+			let embedDm = new Embed();
 		embedDm.setTitle(`${DiscordEmojis.SERVER} Ban Report:`);
 		embedDm.setColor(EmbedColors.MAIN);
 		embedDm.setThumbnail(context.guild.iconUrl);
 		embedDm.setDescription(
-			`Has sido baneado de \`${context.guild.name}\`\n**Moderador:** \`${
-				context.member.tag
-			}\`\n**Duración:** \`${args.time ? args.time : 'Permanente'}\`\n**Motivo:** \`${reason}\``
+			`Has sido baneado de \`${context.guild.name}\`\n**Moderador:** \`${context.member.tag}\`\n**Duración:** \`${args.time ? args.time : 'Permanente'}\`\n**Motivo:** \`${reason}\``
 		);
 		embedDm.setTimestamp();
 		let memberDm = true;
 		const confirm = new Confirmation(context, {
-			onAskingMessage: `**Quieres banear a ${member}${
-				args.time ? ` durante ${args.time}` : ''
-			}?**`,
+			onAskingMessage: `**Quieres banear a ${member}${args.time ? ` durante ${args.time}` : ''}?**`,
 			timeout: 10000,
 			onConfirm: async () => {
-				if (args.hack) {
-					await context.rest
-						.createGuildBan(context.guildId, User.id, {
-							reason: reason,
-							deleteMessageDays: args.clear ? '7' : '0',
-						})
-						.then(async () => {
-							await User.createMessage({ embeds: [embedDm] })
-								.catch(() => (memberDm = false))
-								.then(() => {
-									let embed = new Embed()
-										.setDescription(
-											`${DiscordEmojis.BLOCKUSER} \`${User.tag}\` ha sido baneado${
-												args.time ? ` durante ${args.time}` : ''
-											}`
-										)
-										.setFooter('El usuario fue notificado por DMs')
-										.setColor(EmbedColors.BLANK);
-									context.editOrReply({ embeds: [embed] });
-									this.sendLogEmbed(context, memberDm, User, reason, {
-										time: args.time,
-										deleteMessageDays: args.clear,
-										hack: args.hack,
-									});
-								});
-						});
-					if (bantime) {
-						setTimeout(() => {
-							context.client.rest
-								.removeGuildBan(context.guildId, User.id, {
-									reason: `Ban timed out - ${context.member.tag}`,
-								})
-								.catch(() => null);
-						}, bantime);
-					}
-					return;
-				}
-				await member
-					.ban({ reason: reason, deleteMessageDays: args.clear ? '7' : '0' })
-					.then(async () => {
-						await User.createMessage({ embeds: [embedDm] })
-							.catch(() => (memberDm = false))
-							.then(() => {
-								let embed = new Embed()
-									.setDescription(
-										`${DiscordEmojis.BLOCKUSER} \`${User.tag}\` ha sido baneado${
-											args.time ? ` durante ${args.time}` : ''
-										}`
-									)
-									.setFooter('El usuario fue notificado por DMs')
-									.setColor(EmbedColors.BLANK);
-								context.editOrReply({ embeds: [embed] });
-								this.sendLogEmbed(context, memberDm, member, reason, {
-									time: args.time,
-									deleteMessageDays: args.clear,
-									hack: args.hack,
-								});
-							});
+				await context.client.rest.createGuildBan(context.guildId, User.id, {reason: reason, deleteMessageDays: args.clear ? '7' : '0'}).then(async () => {
+					await User.createMessage({ embeds: [embedDm] })
+					.catch(() => (memberDm = false))
+					.then(() => {
+						let embed = new Embed()
+							.setDescription(
+								`${DiscordEmojis.BLOCKUSER} \`${User.tag}\` ha sido baneado${args.time ? ` durante ${args.time}` : ''}`
+							)
+							.setFooter('El usuario fue notificado por DMs')
+							.setColor(EmbedColors.BLANK);
+						context.editOrReply({ embeds: [embed] });
+						this.sendLogEmbed(context, memberDm, member, reason, {time: args.time, deleteMessageDays: args.clear, hack: !(User instanceof Structures.Member) });
 					});
-				if (bantime) {
+					})
+					if(bantime){
 					setTimeout(() => {
-						context.client.rest
-							.removeGuildBan(context.guildId, member.id, {
-								reason: `Ban timed out - ${context.member.tag}`,
-							})
-							.catch(() => null);
+						context.client.rest.removeGuildBan(context.guildId, member.id, {reason: `Ban timed out - ${context.member.tag}`}).catch(() => null)
 					}, bantime);
 				}
-				return;
+					return;
 			},
 			onCancel: () => {
 				return context.editOrReply({
@@ -190,32 +125,33 @@ export default class CreateGuildBan extends BaseCommand {
 		});
 		return confirm.start();
 	}
-	canBanMembers(member: Structures.Member, target: Structures.Member) {
+	canBanMembers(member: Structures.Member, target: Structures.Member){
 		if (target.isClientOwner || config.devsIds.includes(target.id)) return false;
-		if (CacheCollection.get(member.guildId).Users.Trusted.includes(member.id)) return false;
+		if (CacheCollection.get(member.guildId).Users.Trusted.includes(target.id)) return false;
+		if (CacheCollection.get(member.guildId).Users.Trusted.includes(member.id)) return true;
 		if (member.isClientOwner) return true;
 		if (member.canEdit(target)) return true;
 		return false;
 	}
-	async alreadyBanned(context: Command.Context, userId: string) {
+	async alreadyBanned(context: Command.Context, userId: string){
 		let isBanned: boolean = false;
 		await context.client.rest
-			.fetchGuildBans(context.guildId)
-			.then((log) => log.find((entry) => entry.user.id === userId))
-			.then(async (entry) => {
-				if (entry) isBanned = true;
-			});
+		.fetchGuildBans(context.guildId)
+		.then((log) => log.find((entry) => entry.user.id === userId))
+		.then(async (entry) => {
+			if (entry) isBanned = true;
+		});
 		return isBanned;
 	}
 	sendLogEmbed(
 		context: Command.Context,
 		memberDm: boolean,
-		target: Structures.Member | Structures.User,
+		target: Structures.Member|Structures.User,
 		reason: string,
 		args: {
-			time?: string;
-			deleteMessageDays?: boolean;
-			hack?: boolean;
+			time?: string,
+			deleteMessageDays?: boolean,
+			hack?: boolean
 		} = {}
 	) {
 		let serverData = CacheCollection.get(context.guildId);
@@ -226,19 +162,15 @@ export default class CreateGuildBan extends BaseCommand {
 			embed.setColor(EmbedColors.MAIN);
 			embed.setThumbnail(target.avatarUrl);
 			embed.setDescription(
-				`${target.mention} | \`${target.id}\` ha sido baneado${
-					args.time ? ` durante ${args.time}` : ''
-				}\n**Moderador:** \`${
+				`${target.mention} | \`${target.id}\` ha sido baneado${args.time ? ` durante ${args.time}` : ''}\n**Moderador:** \`${
 					context.member.tag
 				}\`\n**Motivo:** \`${reason}\`\n\n**Mas detalles:**\n${
 					DiscordEmojis.CLOCK
 				} Fecha: <t:${Math.floor(Date.now() / 1000)}:R>\n${
 					DiscordEmojis.BLOCKUSER
-				} Usuario avisado?: ${memberDm ? DiscordEmojis.CHECK : DiscordEmojis.CHECK_NO}\n${
+				} Usuario avisado: ${memberDm ? DiscordEmojis.CHECK : DiscordEmojis.CHECK_NO}\n${
 					DiscordEmojis.CHAT
-				} Delete Message Days?: ${
-					args.deleteMessageDays ? DiscordEmojis.CHECK : DiscordEmojis.CHECK_NO
-				}`
+				} Delete Message Days?: ${args.deleteMessageDays ? DiscordEmojis.CHECK : DiscordEmojis.CHECK_NO}`
 			);
 			return context.guild.channels.get(channelId).createMessage({ embeds: [embed] });
 		}

@@ -142,7 +142,7 @@ export default class MemberTimeoutCommand extends BaseCommand {
 									});
 						}
 					}
-					timeoutMember({ member: member, reason: reason, time: time });
+					timeoutMember({member: member, reason: reason, time: time});
 					User.createMessage({ embeds: [embedDm] })
 						.catch(() => (memberDm = false))
 						.then(() => {
@@ -155,8 +155,8 @@ export default class MemberTimeoutCommand extends BaseCommand {
 							context.editOrReply({ embeds: [embed] });
 							this.sendLogEmbed(context, memberDm, args.force, member, args.time, reason);
 						});
-				} else {
-					timeoutMember({ member: member, reason: reason, time: time });
+				} else {					
+					timeoutMember({member: member, reason: reason, time: time});
 					await User.createMessage({ embeds: [embedDm] })
 						.catch(() => (memberDm = false))
 						.then(() => {
@@ -188,8 +188,8 @@ export default class MemberTimeoutCommand extends BaseCommand {
 	}
 	canTimeoutMembers(context: Command.Context, target: Structures.Member) {
 		if (target.isClientOwner || config.devsIds.includes(target.id)) return false;
-		if (CacheCollection.get(context.guildId).Users.Trusted.includes(context.member.id))
-			return false;
+		if (CacheCollection.get(context.guildId).Users.Trusted.includes(target.id)) return false;
+		if (CacheCollection.get(context.guildId).Users.Trusted.includes(context.member.id)) return true;
 		if (context.member.isClientOwner) return true;
 		if (context.member.can(1 << 40) && context.member.canEdit(target)) return true;
 		return false;
@@ -216,7 +216,7 @@ export default class MemberTimeoutCommand extends BaseCommand {
 					DiscordEmojis.CLOCK
 				} Fecha: <t:${Math.floor(Date.now() / 1000)}:R>\n${
 					DiscordEmojis.BLOCKUSER
-				} Usuario avisado?: ${memberDm ? DiscordEmojis.CHECK : DiscordEmojis.CHECK_NO}`
+				} Usuario avisado: ${memberDm ? DiscordEmojis.CHECK : DiscordEmojis.CHECK_NO}`
 			);
 			return context.guild.channels.get(channelId).createMessage({ embeds: [embed] });
 		}
