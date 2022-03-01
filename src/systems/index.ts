@@ -6,3 +6,5 @@ export * from './antinuke/guildKicksManager';
 export * from './antinuke/guildRolesManager';
 
 export * from './lockdown/lockdownManager';
+
+export * from './antispam/antispam'

@@ -133,18 +133,24 @@ export async function createData(guildId: string) {
   return data.toObject()
 }
 
-export async function timeoutMember(args: { member: Structures.Member; reason: string; time?: number }) {
-	if (args.time) {
-		args.member.edit({
-			communicationDisabledUntil: new Date(Date.now() + args.time).toISOString(),
-			reason: args.reason,
-		});
-	} else {
-		args.member.edit({ communicationDisabledUntil: null, reason: args.reason });
-	}
+export async function timeoutMember(args: {member: Structures.Member, reason: string, time?: number}) {
+	if(args.time){
+    args.member.edit({ communicationDisabledUntil: new Date(Date.now() + args.time).toISOString(), reason: args.reason });
+  } else {
+    args.member.edit({ communicationDisabledUntil: null, reason: args.reason });
+  }
 }
 
-export function canTimeout(guild: Structures.Guild, member: Structures.Member) {
-	if (guild.me.canEdit(member) && guild.me.can(1 << 40)) return true;
-	return false;
+export function canTimeout(guild: Structures.Guild, member: Structures.Member){
+		if (guild.me.canEdit(member) && guild.me.can(1 << 40)) return true;
+		return false;
+}
+
+export function createId(length: number){
+  let ch = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz1234567890';
+  let result = "";
+  for(var i = 0; i < length; i++){
+      result += ch.charAt(Math.floor(Math.random() * ch.length))
+  }
+return result;
 }
