@@ -38,7 +38,8 @@ export const DiscordEmojis = Object.freeze({
    TIMEOUT: '<:timeoutshard:941892587961323571>',
    CONFIRM: '<:confirm:944027411731873842>',
    RETURN: '<:return:944026997431091231>',
-   CHAT: '<:chat:940038402466803784>'
+   CHAT: '<:chat:940038402466803784>',
+   RULES: '<:rules:947663686846271488>'
 });
 
 export const EmbedColors = Object.freeze({

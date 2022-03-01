@@ -138,3 +138,9 @@ export interface ServerConfig {
 
     }
 }
+export interface GuildWarns {
+	ServerID: string;
+    Maxwarns: number;
+    Action: string;
+	Warns: { id: string; moderatorId: string; targetId: string; reason: string; date: number }[];
+}
