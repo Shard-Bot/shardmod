@@ -3,7 +3,7 @@
 <img width="150" height="150" align="left" style="float: left; margin: 0 10px 0 0;" alt="ShardMod" src="https://cdn.discordapp.com/attachments/885233679612379136/946152677585326100/logo.png">
 
 # Sharding
-✨ Antiraid - Moderantion Discord bot
+✨ Antiraid - Moderation Discord bot
 
 [![⭐ GitHub](https://img.shields.io/github/stars/Shard-Bot/shardmod.svg?style=social&label=Stars&style=flat)](https://github.com/Shard-Bot/shardmod/stargazers)
 [![](https://img.shields.io/badge/detritus-0.17.0.beta.0-blue.svg?logo=npm)](https://github.com/detritusjs/client)
@@ -12,7 +12,7 @@
 > ShardMod es usado por mas de 300k usuarios y 300 servidores.
 
 
-# Pull Request 📣
+# Pull Requests 📣
 Las pull requests son bienvenidas. Para cambios importantes, abra un problema primero para discutir lo que le gustaría cambiar.
 
 Asegúrese de actualizar las pruebas según corresponda.
