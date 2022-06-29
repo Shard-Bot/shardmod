@@ -24,9 +24,9 @@ export default class MemberRemoveTimeoutCommand extends BaseCommand {
 			label: 'user',
 			metadata: {
 				description: 'Remueve a un miembro el aislamiento en el servidor',
-				usage: [`${COMMAND_NAME} [-reason]`],
+				usage: '[Miembro] [-reason]',
 				example: [`${COMMAND_NAME} fatand#3431 -reason alguna razón random*`],
-				type: 'Moderation',
+				type: 'moderation',
 			},
 			permissionsClient: [Permissions.EMBED_LINKS],
 		});
@@ -50,14 +50,14 @@ export default class MemberRemoveTimeoutCommand extends BaseCommand {
 			return context.editOrReply(
 				`⚠ | No tengo los permisos necesarios para remover el aislamiento de ${User.tag}`
 			);
-		if (!this.canTimeoutMembers(context, member))
+		if (!(await this.canTimeoutMembers(context, member)))
 			return context.editOrReply(
 				`⚠ | No tienes los permisos necesarios para remover el aislamiento de ${User.tag}`
 			);
 		if (!member.communicationDisabledUntilUnix)
 			return context.editOrReply(`⚠ | El usuario ${User.tag} no se encuentra aislado`);
 		let reason = args.reason?.length ? args.reason : 'No se dio razón';
-		if (reason.length > 513)
+		if (reason.length > 512)
 			return context.editOrReply('⚠ | La razon no puede exeder los 512 caracteres');
 		let embedDm = new Embed();
 		embedDm.setTitle(`${DiscordEmojis.TIMEOUT} Clear Timeout Report:`);
@@ -72,10 +72,10 @@ export default class MemberRemoveTimeoutCommand extends BaseCommand {
 			onAskingMessage: `**Quieres remover el asilamiento de ${member}?**`,
 			timeout: 10000,
 			onConfirm: async () => {
-				timeoutMember({member: member, reason: reason});
+				timeoutMember({ member: member, reason: reason });
 				await User.createMessage({ embeds: [embedDm] })
 					.catch(() => (memberDm = false))
-					.then(() => {
+					.then(async () => {
 						let embed = new Embed()
 							.setDescription(
 								`${DiscordEmojis.TIMEOUT} Se ha removido el aislamiento de \`${User.tag}\``
@@ -83,7 +83,7 @@ export default class MemberRemoveTimeoutCommand extends BaseCommand {
 							.setFooter('El usuario fue notificado por DMs')
 							.setColor(EmbedColors.BLANK);
 						context.editOrReply({ embeds: [embed] });
-						this.sendLogEmbed(context, memberDm, member, reason);
+						await this.sendLogEmbed(context, memberDm, member, reason);
 					});
 			},
 			onCancel: () => {
@@ -101,20 +101,21 @@ export default class MemberRemoveTimeoutCommand extends BaseCommand {
 		});
 		return confirm.start();
 	}
-	canTimeoutMembers(context: Command.Context, target: Structures.Member) {
+	async canTimeoutMembers(context: Command.Context, target: Structures.Member) {
 		if (target.isClientOwner || config.devsIds.includes(target.id)) return false;
-		if (CacheCollection.get(context.guildId).Users.Trusted.includes(context.member.id)) return true;
+		if ((await CacheCollection.getOrFetch(context.guildId)).Users.Trusted.includes(context.member.id))
+			return true;
 		if (context.member.isClientOwner) return true;
 		if (context.member.can(1 << 40) && context.member.canEdit(target)) return true;
 		return false;
 	}
-	sendLogEmbed(
+	async sendLogEmbed(
 		context: Command.Context,
 		memberDm: boolean,
 		target: Structures.Member,
 		reason: string
 	) {
-		let serverData = CacheCollection.get(context.guildId);
+		let serverData = await CacheCollection.getOrFetch(context.guildId);
 		const channelId = serverData.Channels.ModLog;
 		if (channelId.length && context.guild.channels.has(channelId)) {
 			const embed = new Embed();

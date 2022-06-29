@@ -34,8 +34,8 @@ class CacheManager {
 	) {
 		cache.delete(`${guildId}.${member.id}`);
 	}
-	hasImmunity(guildId: string, member: Structures.Member) {
-		const guildData = CacheCollection.get(guildId);
+	async hasImmunity(guildId: string, member: Structures.Member) {
+		const guildData = await CacheCollection.getOrFetch(guildId);
 		if (guildData.Users.Trusted.includes(member.id)) return true;
 		if (guildData.Modules.AntiNuker.Whitelist.Users.includes(member.id)) return true;
 		for (let role of guildData.Modules.AntiNuker.Whitelist.Roles) {
@@ -51,17 +51,17 @@ class CacheManager {
 			return true;
 		return false;
 	}
-	onBeforeAll(guildId: string, event: string) {
-		const guildData = CacheCollection.get(guildId);
+	async onBeforeAll(guildId: string, event: string) {
+		const guildData = await CacheCollection.getOrFetch(guildId);
 		if (!guildData.Modules.AntiNuker.Enabled) return false;
 		if (!guildData.Modules.AntiNuker.Config[event].Enabled) return false;
 		if(!this.client.guilds.get(guildId).me.canAdministrator) return false;
 		return true;
 	}
-	onBefore(guildId: string, member: Structures.Member) {
+	async onBefore(guildId: string, member: Structures.Member) {
 		if (member.id === this.client.clientId) return false;
 		if (this.client.guilds.get(guildId).ownerId === member.id) return false;
-		if (this.hasImmunity(guildId, member)) return false;
+		if (await this.hasImmunity(guildId, member)) return false;
 		if (!this.canBan(guildId, member)) return false;
 		return true;
 	}

@@ -1,7 +1,7 @@
 import { Command, CommandClient } from 'detritus-client';
 import { BaseCommand } from '../basecommand';
 import config from '../../../../config.json';
-import glob from 'glob';
+
 export const COMMAND_NAME = 'reload cmd';
 export default class EvalCommand extends BaseCommand {
 	constructor(client: CommandClient) {

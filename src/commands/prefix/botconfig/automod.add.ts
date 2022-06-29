@@ -27,10 +27,11 @@ export default class AutomodAddCommand extends BaseCommand {
 				},
 			],
 			metadata: {
-                trustedOnly: true,
+				trustedOnly: true,
 				disableDm: true,
-				description: 'Añade una palabra (o palabras) a la lista de automod del servidor',
-				usage: [`${COMMAND_NAME} <palabra> [-Percent]`],
+				description:
+					'Añade una palabra (o palabras) a la lista de automod del servidor',
+				usage: '[Palabra] [-Percent]',
 				example: [`${COMMAND_NAME} fatand tonto -Percent 100%`],
 				type: 'Bot Config',
 			},
@@ -45,14 +46,18 @@ export default class AutomodAddCommand extends BaseCommand {
 		return context.editOrReply('⚠ | Especifica la palabra');
 	}
 	async run(context: Command.Context, args: param) {
-		const guildData = CacheCollection.get(context.guildId);
+		const guildData = await CacheCollection.getOrFetch(context.guildId);
 		const words = guildData.Modules.Automod.Words;
 		if (words.length > 20)
-			return context.editOrReply('⚠ | El servidor alcanzo el maximo de palabras en el automod');
+			return context.editOrReply(
+				'⚠ | El servidor alcanzo el maximo de palabras en el automod'
+			);
 		if (words.find(({ Word }) => args.word.toLowerCase() === Word))
 			return context.editOrReply('⚠ | Esa palabra ya se encuentra establecida');
 		if (args.word.length > 20)
-			return context.editOrReply('⚠ | La palabra no puede contener mas de 20 caracteres');
+			return context.editOrReply(
+				'⚠ | La palabra no puede contener mas de 20 caracteres'
+			);
 		await Model.findOneAndUpdate(
 			{ ServerID: context.guildId },
 			{

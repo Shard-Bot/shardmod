@@ -5,24 +5,28 @@ import CacheCollection from '../../cache/CacheCollection';
 import baseManager from './baseManager';
 
 class GuildBanCreate extends Collections.BaseCollection<string, number> {
+	bans: Collections.BaseCollection<string, number>;
 	constructor() {
 		super();
+		this.bans = new Collections.BaseCollection<string, number>();
 		Client.on(ClientEvents.GUILD_BAN_ADD, async (payload: GatewayClientEvents.GuildBanAdd) => {
-			if (!baseManager.onBeforeAll(payload.guildId, 'maxBans')) return;
-			const serverData = CacheCollection.get(payload.guildId);
+			if (!(await baseManager.onBeforeAll(payload.guildId, 'maxBans'))) return;
+			const serverData = await CacheCollection.getOrFetch(payload.guildId);
 			const executor = await this.fetchExecutor(payload.guildId, payload.user.id);
 			if (!executor) return;
+			if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 			const data = this.get(`${payload.guildId}.${executor.id}`);
 			if (data) {
 				if (data >= serverData.Modules.AntiNuker.Config['maxBans'].Limit) {
-					if (!baseManager.onBefore(payload.guildId, executor))
+					if (!(await baseManager.onBefore(payload.guildId, executor)))
 						return this.delete(`${payload.guildId}.${executor.id}`);
 					executor
 						.ban({ reason: '[Antinuke] Usuario excedio el limite de baneos.' })
-						.then(() => {
-							const serverData = CacheCollection.get(payload.guildId);
+						.then(async () => {
+							const serverData = await CacheCollection.getOrFetch(payload.guildId);
 							let memberDm: boolean = true;
 							if (executor.bot) memberDm = false;
+							if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 							executor
 								.createMessage({
 									embeds: [
@@ -52,6 +56,10 @@ class GuildBanCreate extends Collections.BaseCollection<string, number> {
 											.catch(() => null);
 									}
 								});
+								this.bans.set(`${executor.guild.id}.${executor.id}`, 1)
+								setTimeout(() => {
+									this.bans.delete(`${executor.guild.id}.${executor.id}`);
+								}, 20000);
 						})
 						.catch(() => null);
 					this.delete(`${payload.guildId}.${executor.id}`);
@@ -82,26 +90,30 @@ class GuildBanCreate extends Collections.BaseCollection<string, number> {
 }
 
 class GuildBanRemove extends Collections.BaseCollection<string, number> {
+	bans: Collections.BaseCollection<string, number>;
 	constructor() {
 		super();
+		this.bans = new Collections.BaseCollection<string, number>();
 		Client.on(
 			ClientEvents.GUILD_BAN_REMOVE,
 			async (payload: GatewayClientEvents.GuildBanRemove) => {
-				if (!baseManager.onBeforeAll(payload.guildId, 'maxBans')) return;
-				const serverData = CacheCollection.get(payload.guildId);
+				if (!(await baseManager.onBeforeAll(payload.guildId, 'maxBans'))) return;
+				const serverData = await CacheCollection.getOrFetch(payload.guildId);
 				const executor = await this.fetchExecutor(payload.guildId, payload.user.id);
 				if (!executor) return;
+				if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 				const data = this.get(`${payload.guildId}.${executor.id}`);
 				if (data) {
 					if (data >= serverData.Modules.AntiNuker.Config['maxBans'].Limit) {
-						if (!baseManager.onBefore(payload.guildId, executor))
+						if (!(await baseManager.onBefore(payload.guildId, executor)))
 							return this.delete(`${payload.guildId}.${executor.id}`);
 						executor
 							.ban({ reason: '[Antinuke] Usuario excedio el limite de desbaneos.' })
-							.then(() => {
-								const serverData = CacheCollection.get(payload.guildId);
+							.then(async () => {
+								const serverData = await CacheCollection.getOrFetch(payload.guildId);
 								let memberDm: boolean = true;
 								if (executor.bot) memberDm = false;
+								if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 								executor
 									.createMessage({
 										embeds: [
@@ -131,6 +143,10 @@ class GuildBanRemove extends Collections.BaseCollection<string, number> {
 												.catch(() => null);
 										}
 									});
+									this.bans.set(`${executor.guild.id}.${executor.id}`, 1)
+								setTimeout(() => {
+									this.bans.delete(`${executor.guild.id}.${executor.id}`);
+								}, 20000);
 							})
 							.catch(() => null);
 						this.delete(`${payload.guildId}.${executor.id}`);

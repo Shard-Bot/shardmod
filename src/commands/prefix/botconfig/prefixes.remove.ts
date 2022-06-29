@@ -7,39 +7,43 @@ import CacheCollection from '../../../cache/CacheCollection';
 
 export const COMMAND_NAME = 'prefixes remove';
 type param = {
-    prefix: string;
+	prefix: string;
 };
 
 export default class prefixSetCommand extends BaseCommand {
-   constructor(client: CommandClient) {
-      super(client, {
-         name: COMMAND_NAME,
-         aliases: ['removeprefix', 'prefix delete', 'prefix del', 'prefix rm'],
-         disableDm: true,
-         label: 'prefix',
-         metadata: {
-            description: 'Elimina un prefix de la lista de prefixes del servidor',
-            usage: [`${COMMAND_NAME} <prefix>`],
-            example: [`${COMMAND_NAME} s!`],
-            type: 'Bot Config',
-         },
-         permissions: [Permissions.MANAGE_GUILD],
-         permissionsClient: [Permissions.SEND_MESSAGES],
-      });
-   }
-   onBeforeRun(context: Command.Context, args: param) {
-      return !!args.prefix.length;
-   }
+	constructor(client: CommandClient) {
+		super(client, {
+			name: COMMAND_NAME,
+			aliases: ['removeprefix', 'prefix delete', 'prefix del', 'prefix rm'],
+			disableDm: true,
+			label: 'prefix',
+			metadata: {
+				description: 'Elimina un prefix de la lista de prefixes del servidor',
+				usage: '[Prefix]',
+				example: [`${COMMAND_NAME} s!`],
+				type: 'botConfig',
+			},
+			permissions: [Permissions.MANAGE_GUILD],
+			permissionsClient: [Permissions.SEND_MESSAGES],
+		});
+	}
+	onBeforeRun(context: Command.Context, args: param) {
+		return !!args.prefix.length;
+	}
 
-   onCancelRun(context: Command.Context, args: param) {
-      return context.editOrReply('⚠ | Especifica el prefix');
-   }
-   async run(context: Command.Context, args: param) {
-      const guildData = CacheCollection.get(context.guildId)
-      if(!guildData.Prefixes.includes(args.prefix)) return context.editOrReply('⚠ | Ese prefix no se encuentra establecido')
-      await Model.findOneAndUpdate(
-        { ServerID: context.guildId },{ $pull: { [`Prefixes`]: args.prefix },
-        })
-      return context.editOrReply(`El prefix \`${args.prefix}\` fue removido de la lista de prefixes del servidor`)
-   }
+	onCancelRun(context: Command.Context, args: param) {
+		return context.editOrReply('⚠ | Especifica el prefix');
+	}
+	async run(context: Command.Context, args: param) {
+		const guildData = await CacheCollection.getOrFetch(context.guildId);
+		if (!guildData.Prefixes.includes(args.prefix))
+			return context.editOrReply('⚠ | Ese prefix no se encuentra establecido');
+		await Model.findOneAndUpdate(
+			{ ServerID: context.guildId },
+			{ $pull: { [`Prefixes`]: args.prefix } }
+		);
+		return context.editOrReply(
+			`El prefix \`${args.prefix}\` fue removido de la lista de prefixes del servidor`
+		);
+	}
 }

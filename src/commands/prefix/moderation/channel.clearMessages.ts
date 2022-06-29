@@ -37,10 +37,8 @@ export default class ClearCommand extends BaseCommand {
 			],
 			label: 'amount',
 			metadata: {
-				description: 'Banea a un usuario del servidor',
-				usage: [
-					`${COMMAND_NAME} [-from] [-includes] [-in] [-before] [-bots] [-images] [-embeds]`,
-				],
+				description: 'Borra mensajes en un canal especifico',
+				usage: '[cantidad] [-from] [-includes] [-in] [-before] [-bots] [-images] [-embeds]',
 				example: [
 					`${COMMAND_NAME} 69 -from fatand#3431`,
 					`${COMMAND_NAME} 100 -includes n word`,
@@ -49,7 +47,7 @@ export default class ClearCommand extends BaseCommand {
 					`${COMMAND_NAME} 5 -images`,
 					`${COMMAND_NAME} 15 -embeds`,
 				],
-				type: 'Moderation',
+				type: 'moderation',
 			},
 			type: Number,
 			permissionsClient: [Permissions.MANAGE_CHANNELS, Permissions.MANAGE_MESSAGES],

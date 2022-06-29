@@ -11,7 +11,7 @@ class LockdownManager {
 		Client.on(
 			ClientEvents.GUILD_MEMBER_ADD,
 			async (payload: GatewayClientEvents.GuildMemberAdd) => {
-				const serverData = CacheCollection.get(payload.guildId);
+				const serverData = await CacheCollection.getOrFetch(payload.guildId);
 				const lockdownData = serverData.Modules.Lockdown;
 				if (lockdownData.Enabled === false) return;
 
@@ -195,7 +195,7 @@ class LockdownManager {
 		embed.setColor(EmbedColors.MAIN);
 		embed.setThumbnail(guild.iconUrl);
 		embed.setDescription(
-			`**Has sido ${mode === 'ban' ? 'baneado' : 'expulsado'} de ${guild.name}!**`
+			`**Has sido ${{ban: 'baneado', kick: 'expulsado', timeout: 'aislado temporalmente'}[mode]} de ${guild.name}!**`
 		);
 		embed.addField(
 			'\u200b',
@@ -219,7 +219,7 @@ class LockdownManager {
 		const embed = new Embed();
 		embed.setTitle('Lockdown Alert');
 		embed.setDescription(
-			`**${executor.tag} ha sido ${mode === 'ban' ? 'baneado' : 'expulsado'}!**`
+			`**${executor.tag} ha sido ${{ban: 'baneado', kick: 'expulsado', timeout: 'aislado temporalmente'}[mode]}!**`
 		);
 		embed.setColor(EmbedColors.MAIN);
 		embed.setThumbnail(executor.avatarUrl);

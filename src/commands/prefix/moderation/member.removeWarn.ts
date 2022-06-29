@@ -6,7 +6,6 @@ import { getUserByText } from '../../../utils/functions';
 import { Embed } from 'detritus-client/lib/utils';
 import { defaultData, Model } from '../../../schemas/guildwarns';
 import { GuildWarns } from '../../../utils/types';
-import { paginate } from '../../../utils/paginador';
 import { Confirmation } from '../../../utils/confirm';
 import CacheCollection from '../../../cache/CacheCollection';
 
@@ -26,9 +25,9 @@ export default class GuildWarnsCommand extends BaseCommand {
 			args: [{ name: 'reason', type: String, required: false, aliases: ['r'] }],
 			metadata: {
 				description: 'Remueve un aviso a un usuario',
-				usage: [`${COMMAND_NAME} WarnID`],
+				usage: '[WarnID]',
 				example: [`${COMMAND_NAME} fatand#3431`, `${COMMAND_NAME} NrCBQ`],
-				type: 'Moderation',
+				type: 'moderation',
 			},
 			permissionsClient: [Permissions.EMBED_LINKS],
 		});
@@ -74,7 +73,7 @@ export default class GuildWarnsCommand extends BaseCommand {
 					.setDescription(
 						`${DiscordEmojis.RULES} \`${target.tag}\` **Aviso removido (Total: ${
 							data.Warns.filter(({ targetId }) => targetId === target.id).length
-						})**`
+						 - 1})**`
 					)
 					.setFooter(`El usuario fue avisado por DMs`)
 					.setColor(EmbedColors.BLANK);
@@ -82,7 +81,7 @@ export default class GuildWarnsCommand extends BaseCommand {
 					{ ServerID: context.guildId },
 					{ $pull: { ['Warns']: warn } }
 				);
-				this.sendReport(context, { target: target, reason });
+				await this.sendReport(context, { target: target, reason });
 				return context.editOrReply({ embeds: [embed] });
 			},
 			onCancel: () => {
@@ -124,7 +123,7 @@ export default class GuildWarnsCommand extends BaseCommand {
 		warnArgs.target
 			.createMessage({ embeds: [embedDM] })
 			.catch(() => (memberDm = false))
-			.then(() => {
+			.then(async () => {
 				let embedLog = new Embed()
 					.setTitle('Unwarn Result:')
 					.setThumbnail(warnArgs.target.avatarUrl)
@@ -141,7 +140,7 @@ export default class GuildWarnsCommand extends BaseCommand {
 					)
 					.setColor(EmbedColors.MAIN);
 
-				let serverData = CacheCollection.get(context.guildId);
+				let serverData = await CacheCollection.getOrFetch(context.guildId);
 				const channelId = serverData.Channels.ModLog;
 
 				if (channelId.length && context.guild.channels.has(channelId)) {

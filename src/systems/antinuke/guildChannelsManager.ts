@@ -1,27 +1,31 @@
-import { Collections, GatewayClientEvents } from 'detritus-client';
+import { Collections, GatewayClientEvents, Structures } from 'detritus-client';
 import { AuditLogActions, ClientEvents } from 'detritus-client/lib/constants';
 import Client from '../../client';
 import CacheCollection from '../../cache/CacheCollection';
 import baseManager from './baseManager';
 
 class GuildChannelCreate extends Collections.BaseCollection<string, number> {
+	bans: Collections.BaseCollection<string, number>;
 	constructor() {
 		super();
+		this.bans = new Collections.BaseCollection<string, number>();
 		Client.on(ClientEvents.CHANNEL_CREATE, async (payload: GatewayClientEvents.ChannelCreate) => {
-			if (!baseManager.onBeforeAll(payload.channel.guildId, 'maxCreatedChannels')) return;
-			const serverData = CacheCollection.get(payload.channel.guildId);
+			if (!(await baseManager.onBeforeAll(payload.channel.guildId, 'maxCreatedChannels'))) return;
+			const serverData = await CacheCollection.getOrFetch(payload.channel.guildId);
 			const executor = await this.fetchExecutor(payload.channel.guildId, payload.channel.id);
 			if (!executor) return;
+			if(this.bans.has(`${payload.channel.guildId}.${executor.id}`)) return;
 			const data = this.get(`${payload.channel.guildId}.${executor.id}`);
 			if (data) {
 				if (data >= serverData.Modules.AntiNuker.Config['maxCreatedChannels'].Limit) {
-					if (!baseManager.onBefore(payload.channel.guildId, executor))
+					if (!(await baseManager.onBefore(payload.channel.guildId, executor)))
 						return this.delete(`${payload.channel.guildId}.${executor.id}`);
 					executor
 						.ban({ reason: '[Antinuke] Usuario excedio el limite de canales creados.' })
 						.then(() => {
 							let memberDm: boolean = true;
 							if (executor.bot) memberDm = false;
+							if(this.bans.has(`${payload.channel.guildId}.${executor.id}`)) return;
 							executor
 								.createMessage({
 									embeds: [
@@ -51,6 +55,10 @@ class GuildChannelCreate extends Collections.BaseCollection<string, number> {
 											.catch(() => null);
 									}
 								});
+								this.bans.set(`${executor.guild.id}.${executor.id}`, 1)
+								setTimeout(() => {
+									this.bans.delete(`${executor.guild.id}.${executor.id}`);
+								}, 20000);
 						})
 						.catch(() => null);
 					this.delete(`${payload.channel.guildId}.${executor.id}`);
@@ -81,25 +89,30 @@ class GuildChannelCreate extends Collections.BaseCollection<string, number> {
 }
 
 class GuildChannelDelete extends Collections.BaseCollection<string, number> {
+	bans: Collections.BaseCollection<string, number>;
 	constructor() {
 		super();
+		this.bans = new Collections.BaseCollection<string, number>();
 		Client.on(ClientEvents.CHANNEL_DELETE, async (payload: GatewayClientEvents.ChannelDelete) => {
-			if (!baseManager.onBeforeAll(payload.channel.guildId, 'maxDeletedChannels')) return;
-			const serverData = CacheCollection.get(payload.channel.guildId);
+			if (!(await baseManager.onBeforeAll(payload.channel.guildId, 'maxDeletedChannels'))) return;
+			const serverData = await CacheCollection.getOrFetch(payload.channel.guildId);
 			const executor = await this.fetchExecutor(payload.channel.guildId, payload.channel.id);
 			if (!executor) return;
+			if(this.bans.has(`${payload.channel.guildId}.${executor.id}`)) return;
 			const data = this.get(`${payload.channel.guildId}.${executor.id}`);
 			if (data) {
 				if (data >= serverData.Modules.AntiNuker.Config['maxDeletedChannels'].Limit) {
-					if (!baseManager.onBefore(payload.channel.guildId, executor))
+					if (!(await baseManager.onBefore(payload.channel.guildId, executor)))
 						return this.delete(`${payload.channel.guildId}.${executor.id}`);
-					executor
+						
+					(executor as Structures.Member)
 						.ban({ reason: '[Antinuke] Usuario excedio el limite de canales eliminados.' })
 						.then(() => {
 							let memberDm: boolean = true;
 							if (executor.bot) memberDm = false;
+							if(this.bans.has(`${payload.channel.guildId}.${executor.id}`)) return;
 							executor
-								.createMessage({
+							.createMessage({
 									embeds: [
 										baseManager.DmMessage(
 											payload.channel.guild,
@@ -126,7 +139,12 @@ class GuildChannelDelete extends Collections.BaseCollection<string, number> {
 											})
 											.catch(() => null);
 									}
-								});
+								});	
+						    this.bans.set(`${executor.guild.id}.${executor.id}`, 1)
+							setTimeout(() => {
+								this.bans.delete(`${executor.guild.id}.${executor.id}`);
+							}, 20000);
+						
 						})
 						.catch(() => null);
 					this.delete(`${payload.channel.guildId}.${executor.id}`);
@@ -138,7 +156,7 @@ class GuildChannelDelete extends Collections.BaseCollection<string, number> {
 			}
 		});
 	}
-
+	
 	async fetchExecutor(guildId: string, channelId: string) {
 		return Client.rest
 			.fetchGuildAuditLogs(guildId, { actionType: AuditLogActions.CHANNEL_DELETE })

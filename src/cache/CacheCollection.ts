@@ -9,30 +9,33 @@ import { autoInjectable, container } from 'tsyringe';
 @autoInjectable()
 export class cacheClass extends Collections.BaseCollection<string, ServerConfig> {
 	client = Client;
-	async loadAll() {
-		console.log('Cargando Cache');
 
-		const { guilds } = this.client
-		const start = Date.now();
-		const data = await Model.find().lean();
+	async getOrFetch(key: string) {
+		let data = this.get(key);
 
-		for (const config of data.filter((c) => guilds.map(g => g.id).includes(c.ServerID))) {
-			this.set(config.ServerID, config);
-		}
+		data ??= await this.fetch(key);
 
-		const guildsWithoutData = guilds
-			.filter(guild => !data.map(config => config.ServerID).includes(guild.id))
-
- 	    for (const { id, name } of guildsWithoutData) {
-			console.log(`Creando data en ${name} [${id}]`)
-			const config = await createData(id)
-			this.set(id, config)
-		}
-
-		console.log(`Cache Cargada (${this.size}/${this.client.guilds.size} Servidores) en ${Date.now() - start}`);
+		return data;
 	}
-	checkWhitelist(guildId: string, targetId: string, _module: string, _moduleType: string, document: ServerConfig) {
-        return (document as any).Modules[_module].Whitelist[_moduleType].includes(targetId)
+
+	async fetch(key: string) {
+		let data = await Model.findOne({ ServerID: key }).lean();
+
+		data ??= await createData(key);
+
+		return data;
+	}
+
+	checkWhitelist(
+		guildId: string,
+		targetId: string,
+		_module: string,
+		_moduleType: string,
+		document: ServerConfig
+	) {
+		return (document as any).Modules[_module].Whitelist[_moduleType].includes(
+			targetId
+		);
 	}
 }
 

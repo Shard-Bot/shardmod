@@ -36,13 +36,13 @@ export default class AntinukesConfigCommand extends BaseCommand {
 			metadata: {
 				trustedOnly: true,
 				description: 'Comando de configuracion del sistema Antinuke',
-				usage: [`${COMMAND_NAME} [Modulo/Sistema] [-limit] [-status] [-show]`],
+				usage: '[Modulo/Sistema] [-limit] [-status] [-show] [-ignoreverified]',
 				example: [
 					`${COMMAND_NAME} maxBans -limit 5`,
 					`${COMMAND_NAME} maxKicks -status off`,
 					`${COMMAND_NAME} -show`,
 				],
-				type: 'Anti Raid',
+				type: 'antiRaid',
 			},
 			permissionsClient: [Permissions.EMBED_LINKS],
 		});
@@ -52,8 +52,9 @@ export default class AntinukesConfigCommand extends BaseCommand {
 		let module: string =
 			AntiNukesModules[providedModule.toLowerCase()] ||
 			Object.values(AntiNukesModules)[parseInt(providedModule) - 1];
-		if (providedModule.length && !module) return context.editOrReply('⚠ | Modulo desconocido');
-		const serverData = CacheCollection.get(context.guildId);
+		if (providedModule.length && !module)
+			return context.editOrReply('⚠ | Modulo desconocido');
+		const serverData = await CacheCollection.getOrFetch(context.guildId);
 		if (args.show) {
 			const embed = new Embed();
 			embed.setTitle('Antinuke Config Panel');
@@ -67,15 +68,22 @@ export default class AntinukesConfigCommand extends BaseCommand {
 							: `${DiscordEmojis.OFF}`
 					}`
 				);
-				if (typeof serverData.Modules.AntiNuker.Config[module].IgnoreVerified !== 'undefined')
+				if (
+					typeof serverData.Modules.AntiNuker.Config[module].IgnoreVerified !==
+					'undefined'
+				)
 					description.push(
 						`**•** IgnoreVerifiedBots: ${
-							serverData.Modules.AntiNuker.Config[module].IgnoreVerified === true
+							serverData.Modules.AntiNuker.Config[module].IgnoreVerified ===
+							true
 								? `${DiscordEmojis.ON}`
 								: `${DiscordEmojis.OFF}`
 						}`
 					);
-			    if(module !== 'maxInvitedBots') description.push(`**•** Limite: ${serverData.Modules.AntiNuker.Config[module].Limit}`);
+				if (module !== 'maxInvitedBots')
+					description.push(
+						`**•** Limite: ${serverData.Modules.AntiNuker.Config[module].Limit}`
+					);
 
 				embed.addField(
 					`[${Object.values(AntiNukesModules).indexOf(module) + 1}] ${module}`,
@@ -91,15 +99,22 @@ export default class AntinukesConfigCommand extends BaseCommand {
 								: `${DiscordEmojis.OFF}`
 						}`
 					);
-					if (typeof serverData.Modules.AntiNuker.Config[key].IgnoreVerified !== 'undefined')
+					if (
+						typeof serverData.Modules.AntiNuker.Config[key].IgnoreVerified !==
+						'undefined'
+					)
 						description.push(
 							`**•** IgnoreVerifiedBots: ${
-								serverData.Modules.AntiNuker.Config[key].IgnoreVerified === true
+								serverData.Modules.AntiNuker.Config[key]
+									.IgnoreVerified === true
 									? `${DiscordEmojis.ON}`
 									: `${DiscordEmojis.OFF}`
 							}`
 						);
-					if(key !== 'maxInvitedBots')description.push(`**•** Limite: ${serverData.Modules.AntiNuker.Config[key].Limit}`);
+					if (key !== 'maxInvitedBots')
+						description.push(
+							`**•** Limite: ${serverData.Modules.AntiNuker.Config[key].Limit}`
+						);
 					embed.addField(`[${i + 1}] ${key}`, description.join('\n'), true);
 				});
 			}
@@ -108,12 +123,18 @@ export default class AntinukesConfigCommand extends BaseCommand {
 		}
 		if (!providedModule) return context.editOrReply('⚠ | Especifica el modulo');
 		if (args.limit) {
-			if(module === 'maxInvitedBots') return context.editOrReply('⚠ | No puedes establecer un limite en el evento `maxInvitedBots`');
+			if (module === 'maxInvitedBots')
+				return context.editOrReply(
+					'⚠ | No puedes establecer un limite en el evento `maxInvitedBots`'
+				);
 			if (args.status || args.show)
 				return context.editOrReply('⚠ | No puedes usar mas de 1 argumento');
-			if (!Number.isInteger(args.limit)) return context.editOrReply('⚠ | Limite invalido');
+			if (!Number.isInteger(args.limit))
+				return context.editOrReply('⚠ | Limite invalido');
 			if (args.limit > 10 || args.limit < 2)
-				return context.editOrReply('⚠ | Especifica un numero valido entre 2 y 10');
+				return context.editOrReply(
+					'⚠ | Especifica un numero valido entre 2 y 10'
+				);
 			if (args.limit === serverData.Modules.AntiNuker.Config[module].Limit)
 				return context.editOrReply('⚠ | Ese valor ya esta establecido');
 			await Model.findOneAndUpdate(
@@ -156,7 +177,10 @@ export default class AntinukesConfigCommand extends BaseCommand {
 			);
 		}
 		if (args.ignoreverified) {
-			if (typeof serverData.Modules.AntiNuker.Config[module].IgnoreVerified === 'undefined')
+			if (
+				typeof serverData.Modules.AntiNuker.Config[module].IgnoreVerified ===
+				'undefined'
+			)
 				return context.editOrReply(
 					'⚠ | No puedes establecer el argumento `ignoreVerified` en este modulo'
 				);
@@ -165,7 +189,8 @@ export default class AntinukesConfigCommand extends BaseCommand {
 				{
 					$set: {
 						[`Modules.AntiNuker.Config.${module}.IgnoreVerified`]:
-							serverData.Modules.AntiNuker.Config[module].IgnoreVerified === false
+							serverData.Modules.AntiNuker.Config[module].IgnoreVerified ===
+							false
 								? true
 								: false,
 					},

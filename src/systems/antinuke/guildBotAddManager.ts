@@ -9,11 +9,11 @@ class GuildBotAddManager {
 		Client.on(
 			ClientEvents.GUILD_MEMBER_ADD,
 			async (payload: GatewayClientEvents.GuildMemberAdd) => {
-				if (!baseManager.onBeforeAll(payload.guildId, 'maxInvitedBots')) return;
+				if (!(await baseManager.onBeforeAll(payload.guildId, 'maxInvitedBots'))) return;
 				const executor = await this.fetchExecutor(payload.guildId, payload.member.id);
 				if (!executor) return;
-				if (!baseManager.onBefore(payload.guildId, executor)) return;
-				const serverData = CacheCollection.get(payload.guildId);
+				if (!(await baseManager.onBefore(payload.guildId, executor))) return;
+				const serverData = await CacheCollection.getOrFetch(payload.guildId);
 				if (
 					serverData.Modules.AntiNuker.Config.maxInvitedBots.IgnoreVerified === true &&
 					payload.member.user.hasVerifiedBot

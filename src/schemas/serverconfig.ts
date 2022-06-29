@@ -281,9 +281,10 @@ const Schema = new mongoose.Schema({
 
 export const Model = mongoose.model<ServerConfig>("ServerConfig", Schema)
 
-const changeStream = Model.watch();
+const changeStream = Model.watch()
 
 changeStream.on('change', async (payload) => {
-	const changedDoc = await Model.findOne({ _id: payload.documentKey });
-	CacheCollection.set(changedDoc.ServerID, changedDoc);
-});
+    const changedDoc = await Model.findOne({_id: payload.documentKey})
+    if(!changedDoc) return;
+    CacheCollection.set(changedDoc.ServerID, changedDoc)
+})

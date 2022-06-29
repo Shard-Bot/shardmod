@@ -8,3 +8,5 @@ export * from './antinuke/guildRolesManager';
 export * from './lockdown/lockdownManager';
 
 export * from './antispam/antispam'
+
+export * from './logs/logsManager'

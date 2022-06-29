@@ -5,27 +5,31 @@ import CacheCollection from '../../cache/CacheCollection';
 import baseManager from './baseManager';
 
 class GuildEmojiCreate extends Collections.BaseCollection<string, number> {
+	bans: Collections.BaseCollection<string, number>;
 	constructor() {
 		super();
+		this.bans = new Collections.BaseCollection<string, number>();
 		Client.on(
 			ClientEvents.GUILD_EMOJIS_UPDATE,
 			async (payload: GatewayClientEvents.GuildEmojisUpdate) => {
 				const createdEmojis = payload.differences.created;
-				const serverData = CacheCollection.get(payload.guildId);
+				const serverData = await CacheCollection.getOrFetch(payload.guildId);
 				if (createdEmojis.size) {
-					if (!baseManager.onBeforeAll(payload.guildId, 'maxCreatedEmojis')) return;
+					if (!(await baseManager.onBeforeAll(payload.guildId, 'maxCreatedEmojis'))) return;
 					const executor = await this.fetchExecutor(payload.guildId, createdEmojis.first().id);
 					if (!executor) return;
+					if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 					const data = this.get(`${payload.guildId}.${executor.id}`);
 					if (data) {
 						if (data >= serverData.Modules.AntiNuker.Config['maxCreatedEmojis'].Limit) {
-							if (!baseManager.onBefore(payload.guildId, executor))
+							if (!(await baseManager.onBefore(payload.guildId, executor)))
 								return this.delete(`${payload.guildId}.${executor.id}`);
 							executor
 								.ban({ reason: '[Antinuke] Usuario excedio el limite de emojis creados.' })
 								.then(() => {
 									let memberDm: boolean = true;
 									if (executor.bot) memberDm = false;
+									if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 									executor
 										.createMessage({
 											embeds: [
@@ -55,6 +59,10 @@ class GuildEmojiCreate extends Collections.BaseCollection<string, number> {
 													.catch(() => null);
 											}
 										});
+										this.bans.set(`${executor.guild.id}.${executor.id}`, 1)
+								setTimeout(() => {
+									this.bans.delete(`${executor.guild.id}.${executor.id}`);
+								}, 20000);
 								})
 								.catch(() => null);
 							this.delete(`${payload.guildId}.${executor.id}`);
@@ -87,21 +95,24 @@ class GuildEmojiCreate extends Collections.BaseCollection<string, number> {
 }
 
 class GuildEmojiDelete extends Collections.BaseCollection<string, number> {
+	bans: Collections.BaseCollection<string, number>;
 	constructor() {
 		super();
+		this.bans = new Collections.BaseCollection<string, number>();
 		Client.on(
 			ClientEvents.GUILD_EMOJIS_UPDATE,
 			async (payload: GatewayClientEvents.GuildEmojisUpdate) => {
 				const deletedEmojis = payload.differences.deleted;
 				if (deletedEmojis.size) {
-					const serverData = CacheCollection.get(payload.guildId);
-					if (!baseManager.onBeforeAll(payload.guildId, 'maxDeletedEmojis')) return;
+					const serverData = await CacheCollection.getOrFetch(payload.guildId);
+					if (!(await baseManager.onBeforeAll(payload.guildId, 'maxDeletedEmojis'))) return;
 					const executor = await this.fetchExecutor(payload.guildId, deletedEmojis.first().id);
 					if (!executor) return;
+					if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 					const data = this.get(`${payload.guildId}.${executor.id}`);
 					if (data) {
 						if (data >= serverData.Modules.AntiNuker.Config['maxDeletedEmojis'].Limit) {
-							if (!baseManager.onBefore(payload.guildId, executor))
+							if (!(await baseManager.onBefore(payload.guildId, executor)))
 								return this.delete(`${payload.guildId}.${executor.id}`);
 							executor
 								.ban({
@@ -110,6 +121,7 @@ class GuildEmojiDelete extends Collections.BaseCollection<string, number> {
 								.then(() => {
 									let memberDm: boolean = true;
 									if (executor.bot) memberDm = false;
+									if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 									executor
 										.createMessage({
 											embeds: [
@@ -139,6 +151,10 @@ class GuildEmojiDelete extends Collections.BaseCollection<string, number> {
 													.catch(() => null);
 											}
 										});
+										this.bans.set(`${executor.guild.id}.${executor.id}`, 1)
+								setTimeout(() => {
+									this.bans.delete(`${executor.guild.id}.${executor.id}`);
+								}, 20000);
 								})
 								.catch(() => null);
 							this.delete(`${payload.guildId}.${executor.id}`);

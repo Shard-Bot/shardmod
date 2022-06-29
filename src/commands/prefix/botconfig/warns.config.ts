@@ -27,13 +27,13 @@ export default class WarnsConfigCommand extends BaseCommand {
 			metadata: {
 				trustedOnly: true,
 				description: 'Comando de configuracion del sistema de warns',
-				usage: [`${COMMAND_NAME} [-max] [-action] [-show]`],
+				usage: '[-max] [-action] [-show]',
 				example: [
 					`${COMMAND_NAME} -max 5`,
 					`${COMMAND_NAME} -action timeout`,
 					`${COMMAND_NAME} -show`,
 				],
-				type: 'Bot Config',
+				type: 'botConfig',
 			},
 			permissionsClient: [Permissions.EMBED_LINKS],
 		});

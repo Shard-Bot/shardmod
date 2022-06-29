@@ -2,7 +2,6 @@ import { Command, Interaction, Utils } from 'detritus-client';
 import {
 	MessageFlags,
 	MessageComponentButtonStyles,
-	InteractionCallbackTypes,
 } from 'detritus-client/lib/constants';
 import { Components, Embed } from 'detritus-client/lib/utils';
 import { DiscordEmojis, EmbedColors } from './constants';
@@ -33,7 +32,7 @@ export class Confirmation {
 		this.context = context;
 		this.onConfirm = options.onConfirm;
 		this.onCancel = options.onCancel;
-        this.onAskingMessage = options.onAskingMessage;
+    this.onAskingMessage = options.onAskingMessage;
 		this.onTimeout = options.onTimeout ?? (() => undefined);
 		this.timeout = options.timeout ?? 7500;
 

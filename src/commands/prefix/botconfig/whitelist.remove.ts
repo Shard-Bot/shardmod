@@ -17,24 +17,24 @@ type param = {
 export default class WhitelistaddCommand extends BaseCommand {
    constructor(client: CommandClient) {
       super(client, {
-         name: COMMAND_NAME,
-         aliases: ['wl rm', 'wl del', 'wl rv'],
-         disableDm: true,
-         args: [{ name: 'module', type: String, required: true, aliases: ['sistema'] }],
-         label: 'userOrRoleOrChannel',
-         metadata: {
-            trustedOnly: true,
-            description: 'Remueve a un Usuario|Canal|Rol de la whitelist de un modulo',
-            usage: [`${COMMAND_NAME} <Miembro|Canal|Rol> <-module (sistema)>`],
-            example: [
-               `${COMMAND_NAME} @fatand -module antinuker`,
-               `${COMMAND_NAME} @Administrador -module antiflood`,
-               `${COMMAND_NAME} #galeria -module antilinks`,
-            ],
-            type: 'Bot Config',
-         },
-         permissionsClient: [Permissions.EMBED_LINKS],
-      });
+			name: COMMAND_NAME,
+			aliases: ['wl rm', 'wl del', 'wl rv'],
+			disableDm: true,
+			args: [{ name: 'module', type: String, required: true, aliases: ['sistema'] }],
+			label: 'userOrRoleOrChannel',
+			metadata: {
+				trustedOnly: true,
+				description: 'Remueve a un Usuario|Canal|Rol de la whitelist de un modulo',
+				usage: '[Miembro|Canal|Rol] [-module]',
+				example: [
+					`${COMMAND_NAME} @fatand -module antinuker`,
+					`${COMMAND_NAME} @Administrador -module antiflood`,
+					`${COMMAND_NAME} #galeria -module antilinks`,
+				],
+				type: 'botConfig',
+			},
+			permissionsClient: [Permissions.EMBED_LINKS],
+		});
    }
    onBeforeRun(context: Command.Context, args: param) {
       return !!args.userOrRoleOrChannel.length;

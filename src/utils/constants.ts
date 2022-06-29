@@ -39,7 +39,9 @@ export const DiscordEmojis = Object.freeze({
    CONFIRM: '<:confirm:944027411731873842>',
    RETURN: '<:return:944026997431091231>',
    CHAT: '<:chat:940038402466803784>',
-   RULES: '<:rules:947663686846271488>'
+   RULES: '<:rules:947663686846271488>',
+   LOADING: '<a:typing:948427869644812298>',
+   REPLY: '<:reply:948723984617332757>'
 });
 
 export const EmbedColors = Object.freeze({

@@ -10,32 +10,33 @@ import CacheCollection from '../../../cache/CacheCollection';
 export const COMMAND_NAME = 'trusted show';
 
 export default class TrustedShowCommand extends BaseCommand {
-   constructor(client: CommandClient) {
-      super(client, {
-         name: COMMAND_NAME,
-         aliases: ['t show'],
-         disableDm: true,
-         metadata: {
-            trustedOnly: true,
-            description: 'Muestra la lista trusted del servidor',
-            usage: [`${COMMAND_NAME}`],
-            example: [`${COMMAND_NAME}`],
-            type: 'Bot Config',
-         },
-         permissionsClient: [Permissions.EMBED_LINKS],
-      });
-   }
-   async run(context: Command.Context) {
-      const document = CacheCollection.get(context.guildId);
-      if (!document.Users.Trusted.length)
-         return context.editOrReply('ℹ️ | No hay usuarios en la base de datos');
+	constructor(client: CommandClient) {
+		super(client, {
+			name: COMMAND_NAME,
+			aliases: ['t show'],
+			disableDm: true,
+			metadata: {
+				trustedOnly: true,
+				description: 'Muestra la lista trusted del servidor',
+				example: [COMMAND_NAME],
+				type: 'botConfig',
+			},
+			permissionsClient: [Permissions.EMBED_LINKS],
+		});
+	}
+	async run(context: Command.Context) {
+		const document = await CacheCollection.getOrFetch(context.guildId);
+		if (!document.Users.Trusted.length)
+			return context.editOrReply('ℹ️ | No hay usuarios en la base de datos');
 
-      const embed = new Embed();
-      embed.setTitle(`TRUSTEDS: (${document.Users.Trusted.length}/5)`);
-      embed.setColor(EmbedColors.MAIN);
-      embed.setDescription(
-         document.Users.Trusted.map((user: string, i: number) => `**${i + 1}** • <@${user}>`).join('\n')
-      );
-      context.editOrReply({ embeds: [embed] });
-   }
+		const embed = new Embed();
+		embed.setTitle(`TRUSTEDS: (${document.Users.Trusted.length}/5)`);
+		embed.setColor(EmbedColors.MAIN);
+		embed.setDescription(
+			document.Users.Trusted.map(
+				(user: string, i: number) => `**${i + 1}** • <@${user}>`
+			).join('\n')
+		);
+		context.editOrReply({ embeds: [embed] });
+	}
 }

@@ -6,7 +6,8 @@ export default new ShardClient(config.token, {
   cache: { messages: { expire: 60 * 60 * 1000 } },
   gateway: {
     compress: false,
-    intents: 'ALL',
+    intents: 4735,
+    loadAllMembers: true,
     presence: {
       status: PresenceStatuses.ONLINE,
     },

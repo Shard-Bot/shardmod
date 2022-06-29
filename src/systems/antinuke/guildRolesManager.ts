@@ -5,25 +5,29 @@ import CacheCollection from '../../cache/CacheCollection';
 import baseManager from './baseManager';
 
 class GuildRoleCreate extends Collections.BaseCollection<string, number> {
+	bans: Collections.BaseCollection<string, number>;
 	constructor() {
 		super();
+		this.bans = new Collections.BaseCollection<string, number>();
 		Client.on(
 			ClientEvents.GUILD_ROLE_CREATE,
 			async (payload: GatewayClientEvents.GuildRoleCreate) => {
-				if (!baseManager.onBeforeAll(payload.guildId, 'maxCreatedRoles')) return;
-				const serverData = CacheCollection.get(payload.guildId);
+				if (!(await baseManager.onBeforeAll(payload.guildId, 'maxCreatedRoles'))) return;
+				const serverData = await CacheCollection.getOrFetch(payload.guildId);
 				const executor = await this.fetchExecutor(payload.guildId, payload.role.id);
 				if (!executor) return;
+				if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 				const data = this.get(`${payload.guildId}.${executor.id}`);
 				if (data) {
 					if (data >= serverData.Modules.AntiNuker.Config['maxCreatedRoles'].Limit) {
-						if (!baseManager.onBefore(payload.guildId, executor))
+						if (!(await baseManager.onBefore(payload.guildId, executor)))
 							return this.delete(`${payload.guildId}.${executor.id}`);
 						executor
 							.ban({ reason: '[Antinuke] Usuario excedio el limite de roles creados.' })
 							.then(() => {
 								let memberDm: boolean = true;
 								if (executor.bot) memberDm = false;
+								if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 								executor
 									.createMessage({
 										embeds: [
@@ -53,6 +57,10 @@ class GuildRoleCreate extends Collections.BaseCollection<string, number> {
 												.catch(() => null);
 										}
 									});
+									this.bans.set(`${executor.guild.id}.${executor.id}`, 1)
+									setTimeout(() => {
+										this.bans.delete(`${executor.guild.id}.${executor.id}`);
+									}, 20000);
 							})
 							.catch(() => null);
 						this.delete(`${payload.guildId}.${executor.id}`);
@@ -84,25 +92,30 @@ class GuildRoleCreate extends Collections.BaseCollection<string, number> {
 }
 
 class GuildRoleDelete extends Collections.BaseCollection<string, number> {
+	bans: Collections.BaseCollection<string, number>;
 	constructor() {
 		super();
+		this.bans = new Collections.BaseCollection<string, number>();
 		Client.on(
 			ClientEvents.GUILD_ROLE_DELETE,
 			async (payload: GatewayClientEvents.GuildRoleDelete) => {
-				if (!baseManager.onBeforeAll(payload.guildId, 'maxDeletedRoles')) return;
-				const serverData = CacheCollection.get(payload.guildId);
+				if(!payload.role) return;
+				if (!(await baseManager.onBeforeAll(payload.guildId, 'maxDeletedRoles'))) return;
+				const serverData = await CacheCollection.getOrFetch(payload.guildId);
 				const executor = await this.fetchExecutor(payload.guildId, payload.role.id);
 				if (!executor) return;
+				if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 				const data = this.get(`${payload.guildId}.${executor.id}`);
 				if (data) {
 					if (data >= serverData.Modules.AntiNuker.Config['maxDeletedRoles'].Limit) {
-						if (!baseManager.onBefore(payload.guildId, executor))
+						if (!(await baseManager.onBefore(payload.guildId, executor)))
 							return this.delete(`${payload.guildId}.${executor.id}`);
 						executor
 							.ban({ reason: '[Antinuke] Usuario excedio el limite de roles eliminados.' })
 							.then(() => {
 								let memberDm: boolean = true;
 								if (executor.bot) memberDm = false;
+								if(this.bans.has(`${payload.guildId}.${executor.id}`)) return;
 								executor
 									.createMessage({
 										embeds: [
@@ -132,6 +145,10 @@ class GuildRoleDelete extends Collections.BaseCollection<string, number> {
 												.catch(() => null);
 										}
 									});
+									this.bans.set(`${executor.guild.id}.${executor.id}`, 1)
+									setTimeout(() => {
+										this.bans.delete(`${executor.guild.id}.${executor.id}`);
+									}, 20000);
 							})
 							.catch(() => null);
 						this.delete(`${payload.guildId}.${executor.id}`);

@@ -32,10 +32,9 @@ class AntispamManager {
 		this.messages = new Collections.BaseCollection<string, Structures.Message[]>();
 		Client.on(ClientEvents.MESSAGE_CREATE, async (payload: GatewayClientEvents.MessageCreate) => {
 			let { message } = payload;
-			if (!message.guild) return;
+			if (!message.guild || !message.member) return;
 			if (message.member?.id === Client.userId) return;
-			if (message.guildId !== '920792338245230631') return;
-			const serverData = CacheCollection.get(message.guildId);
+			const serverData = await CacheCollection.getOrFetch(message.guildId);
 			await this.removeSpam(message, serverData);
 		});
 	}
@@ -57,7 +56,7 @@ class AntispamManager {
 		return false;
 	}
 	async removeSpam(message: Structures.Message, serverData: ServerConfig) {
-		if (this.isFlood(message, this.percents, serverData)) {
+		if (await this.isFlood(message, this.percents, serverData)) {
 			timeoutMember({
 				member: message.member,
 				reason: `[Antispam] ${reasons['Flood']}`,
@@ -76,6 +75,14 @@ class AntispamManager {
 		if (this.isLink(message, serverData.Modules.AntiLinks.AllowImages)) {
 			let { Enabled } = serverData.Modules.AntiLinks;
 			if (!Enabled) return false;
+			if (
+				this.hasImmunity(
+					message.member,
+					message.channel as Structures.ChannelGuildText,
+					'AntiLinks',
+					serverData
+				)
+			) return ;
 			if (this.maxLinks(message, this.percents, serverData)) {
 				message.delete({ reason: `[Antispam] ${reasons['Link']}` }).catch(() => null);
 				timeoutMember({
@@ -89,7 +96,15 @@ class AntispamManager {
 		}
 		if (this.isbannedWord(message, serverData.Modules.Automod.Words)) {
 			let { Enabled } = serverData.Modules.Automod;
-			if (!Enabled) return false;
+			if (!Enabled) return ;
+			if (
+				this.hasImmunity(
+					message.member,
+					message.channel as Structures.ChannelGuildText,
+					'Automod',
+					serverData
+				)
+			) return;
 			if (this.maxBannedWord(message, this.percents, serverData)) {
 				message.delete({ reason: `[Antispam] ${reasons['BanWord']}` }).catch(() => null);
 				timeoutMember({
@@ -103,8 +118,17 @@ class AntispamManager {
 		}
 		if (this.isWallText(message, serverData.Modules.AntiWallText.Limit)) {
 			let { Enabled } = serverData.Modules.AntiWallText;
-			if (!Enabled) return false;
+			if (!Enabled) return;
+			if (
+				this.hasImmunity(
+					message.member,
+					message.channel as Structures.ChannelGuildText,
+					'AntiWallText',
+					serverData
+				)
+			) return;
 			if (this.maxWallText(message, this.percents, serverData)) {
+				console.log('wall text')
 				message.delete({ reason: `[Antispam] ${reasons['WallText']}` }).catch(() => null);
 				timeoutMember({
 					member: message.member,
@@ -117,7 +141,15 @@ class AntispamManager {
 		}
 		if (this.isCAPS(message, serverData.Modules.AntiCaps.Limit)) {
 			let { Enabled } = serverData.Modules.AntiCaps;
-			if (!Enabled) return false;
+			if (!Enabled) return;
+			if (
+				this.hasImmunity(
+					message.member,
+					message.channel as Structures.ChannelGuildText,
+					'AntiCaps',
+					serverData
+				)
+			) return;
 			if (this.maxCaps(message, this.percents, serverData)) {
 				message.delete({ reason: `[Antispam] ${reasons['Caps']}` }).catch(() => null);
 				timeoutMember({
@@ -131,12 +163,12 @@ class AntispamManager {
 		}
 	}
 
-	isFlood(
+	async isFlood(
 		message: Structures.Message,
 		cache: Collections.BaseCollection<string, modules>,
 		serverData: ServerConfig
-	): boolean {
-		let { Percent, PercentTimeLimit, Enabled } = CacheCollection.get(message.guildId).Modules
+	): Promise<boolean> {
+		let { Percent, PercentTimeLimit, Enabled } = (await CacheCollection.getOrFetch(message.guildId)).Modules
 			.AntiFlood;
 		if (!Enabled) return false;
 		if (
@@ -168,9 +200,8 @@ class AntispamManager {
 		cache: Collections.BaseCollection<string, modules>,
 		serverData: ServerConfig
 	): boolean {
-		let { Limit, Percent, PercentTimeLimit, Enabled } = serverData.Modules.AntiCaps;
+		let { Limit, Percent, PercentTimeLimit } = serverData.Modules.AntiCaps;
 		if (!this.isCAPS(message, Limit)) return false;
-		if (!Enabled) return false;
 		if (
 			this.hasImmunity(
 				message.member,
@@ -208,18 +239,8 @@ class AntispamManager {
 		cache: Collections.BaseCollection<string, modules>,
 		serverData: ServerConfig
 	): boolean {
-		let { Limit, Percent, PercentTimeLimit, Enabled } = serverData.Modules.AntiWallText;
-		if (!Enabled) return false;
+		let { Limit, Percent, PercentTimeLimit } = serverData.Modules.AntiWallText;
 		if (!this.isWallText(message, Limit)) return false;
-		if (
-			this.hasImmunity(
-				message.member,
-				message.channel as Structures.ChannelGuildText,
-				'AntiWallText',
-				serverData
-			)
-		)
-			return false;
 		let data = cache.get(`${message.member.guildId}.${message.member.id}`);
 		if (!data) data = this.createDefaultPercent(message.member, cache);
 		data.Antiwalltext += Percent;
@@ -236,11 +257,15 @@ class AntispamManager {
 		if (!message.content.length) return false;
 		if (
 			allowImages &&
-			message.content.match(process.env.mediaRegex)
+			message.content.match(
+				/(https:\/\/)([^\s(["<,>/]*)(\/)[^\s[",><]*(.png|.jpg|.gif|.webp|.mp4|.jpeg)(\?[^\s[",><]*)?/gi
+			)
 		)
 			return false;
 		if (
-			!message.content.match(process.env.linkRegex) 
+			!message.content.match(
+				'https?://(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|https?://(?:www.|(?!www))[a-zA-Z0-9]+.[^s]{2,}|discord(?:.com|app.com|.gg)[/invite/]?(?:[a-zA-Z0-9-]{2,32})'
+			)
 		)
 			return false;
 		return true;
@@ -250,18 +275,8 @@ class AntispamManager {
 		cache: Collections.BaseCollection<string, modules>,
 		serverData: ServerConfig
 	): boolean {
-		let { AllowImages, Percent, PercentTimeLimit, Enabled } = serverData.Modules.AntiLinks;
+		let { AllowImages, Percent, PercentTimeLimit } = serverData.Modules.AntiLinks;
 		if (!this.isLink(message, AllowImages)) return false;
-		if (!Enabled) return false;
-		if (
-			this.hasImmunity(
-				message.member,
-				message.channel as Structures.ChannelGuildText,
-				'AntiLinks',
-				serverData
-			)
-		)
-			return false;
 		let data = cache.get(`${message.member.guildId}.${message.member.id}`);
 		if (!data) data = this.createDefaultPercent(message.member, cache);
 		data.Antilinks += Percent;
@@ -288,19 +303,9 @@ class AntispamManager {
 		cache: Collections.BaseCollection<string, modules>,
 		serverData: ServerConfig
 	): boolean {
-		let { PercentTimeLimit, Enabled, Words } = serverData.Modules.Automod;
+		let { PercentTimeLimit, Words } = serverData.Modules.Automod;
 		const Percent = this.isbannedWord(message, Words);
 		if (!Percent) return false;
-		if (!Enabled) return false;
-		if (
-			this.hasImmunity(
-				message.member,
-				message.channel as Structures.ChannelGuildText,
-				'Automod',
-				serverData
-			)
-		)
-			return false;
 		let data = cache.get(`${message.member.guildId}.${message.member.id}`);
 		if (!data) data = this.createDefaultPercent(message.member, cache);
 		data.Automod += Percent;
@@ -327,7 +332,7 @@ class AntispamManager {
 		message.member
 			.createMessage({ embeds: [embedDm] })
 			.catch(() => (memberDm = false))
-			.then(() => {
+			.then(async () => {
 				let embed = new Embed()
 					.setTitle('Antispam')
 					.setDescription(
@@ -336,11 +341,11 @@ class AntispamManager {
 					.setFooter('El usuario fue notificado por DMs')
 					.setColor(EmbedColors.BLANK);
 				message.channel.createMessage({ embeds: [embed] });
-				this.sendBotlog(message, memberDm, alert);
+				await this.sendBotlog(message, memberDm, alert);
 			});
 	}
-	sendBotlog(message: Structures.Message, memberDm: boolean, reason: string) {
-		let serverData = CacheCollection.get(message.guildId);
+	async sendBotlog(message: Structures.Message, memberDm: boolean, reason: string) {
+		let serverData = await CacheCollection.getOrFetch(message.guildId);
 		const channelId = serverData.Channels.BotLog;
 		if (channelId.length && message.guild.channels.has(channelId)) {
 			const embed = new Embed();

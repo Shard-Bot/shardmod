@@ -13,22 +13,28 @@ type param = {
 export default class prefixSetCommand extends BaseCommand {
    constructor(client: CommandClient) {
       super(client, {
-         name: COMMAND_NAME,
-         aliases: ['showprefixs', 'showprefixes', 'prefix display', 'display prefixes', 'prefixes list', 'prefix list'],
-         disableDm: true,
-         label: 'prefix',
-         metadata: {
-            description: 'Muestra la lista de prefixes del servidor',
-            usage: [`${COMMAND_NAME}`],
-            example: [`${COMMAND_NAME}`],
-            type: 'Bot Config',
-         },
-         permissions: [Permissions.MANAGE_GUILD],
-         permissionsClient: [Permissions.EMBED_LINKS],
-      });
+			name: COMMAND_NAME,
+			aliases: [
+				'showprefixs',
+				'showprefixes',
+				'prefix display',
+				'display prefixes',
+				'prefixes list',
+				'prefix list',
+			],
+			disableDm: true,
+			label: 'prefix',
+			metadata: {
+				description: 'Muestra la lista de prefixes del servidor',
+				example: [COMMAND_NAME],
+				type: 'botConfig',
+			},
+			permissions: [Permissions.MANAGE_GUILD],
+			permissionsClient: [Permissions.EMBED_LINKS],
+		});
    }
    async run(context: Command.Context, args: param) {
-      const guildData = CacheCollection.get(context.guildId)
+      const guildData = await CacheCollection.getOrFetch(context.guildId)
       const embed = new Embed();
       embed.setTitle(`Custom Prefixes List [${guildData.Prefixes.length}/5]`)
       embed.setColor(EmbedColors.MAIN)

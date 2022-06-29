@@ -19,10 +19,11 @@ export default class AutomodRemoveCommand extends BaseCommand {
 			metadata: {
 				trustedOnly: true,
 				disableDm: true,
-				description: 'Remueve una palabra (o palabras) de la lista de automod del servidor',
-				usage: [`${COMMAND_NAME} <palabra>`],
+				description:
+					'Remueve una palabra (o palabras) de la lista de automod del servidor',
+				usage: '[Palabra]',
 				example: [`${COMMAND_NAME} nicaragua`],
-				type: 'Bot Config',
+				type: 'botConfig',
 			},
 			permissionsClient: [Permissions.SEND_MESSAGES],
 		});
@@ -35,21 +36,19 @@ export default class AutomodRemoveCommand extends BaseCommand {
 		return context.editOrReply('⚠ | Especifica la palabra');
 	}
 	async run(context: Command.Context, args: param) {
-		const guildData = CacheCollection.get(context.guildId);
+		const guildData = await CacheCollection.getOrFetch(context.guildId);
 		const words = guildData.Modules.Automod.Words;
-		const index = words.findIndex(({ Word }) => args.word.toLowerCase() === Word)
+		const index = words.findIndex(({ Word }) => args.word.toLowerCase() === Word);
 		if (index === -1)
 			return context.editOrReply('⚠ | Esa palabra no se encuentra establecida');
 		await Model.findOneAndUpdate(
 			{ ServerID: context.guildId },
 			{
 				$pull: {
-					[`Modules.Automod.Words`]: { ["Word"]: `${args.word.toLowerCase()}` },
+					[`Modules.Automod.Words`]: { Word: `${args.word.toLowerCase()}` },
 				},
 			}
 		);
-		return context.editOrReply(
-			`Se removio \`${args.word}\` de la lista automod.`
-		);
+		return context.editOrReply(`Se removio \`${args.word}\` de la lista automod.`);
 	}
 }

@@ -26,12 +26,12 @@ export default class MemberWarnCommand extends BaseCommand {
 			label: 'user',
 			metadata: {
 				description: 'Añade un aviso a un miembro del servidor',
-				usage: [`${COMMAND_NAME} <miembro> [-reason]`],
+				usage: '[Miembro] [-reason]',
 				example: [
 					`${COMMAND_NAME} fatand#3431`,
 					`${COMMAND_NAME} fatand#3431 -reason Insultos`,
 				],
-				type: 'Moderation',
+				type: 'moderation',
 			},
 			permissionsClient: [Permissions.EMBED_LINKS, Permissions.MANAGE_ROLES],
 		});
@@ -122,10 +122,11 @@ export default class MemberWarnCommand extends BaseCommand {
 		});
 		return confirm.start();
 	}
-	canWarnMembers(context: Command.Context, target: Structures.Member) {
+	async canWarnMembers(context: Command.Context, target: Structures.Member) {
 		if (target.isClientOwner || config.devsIds.includes(target.id)) return false;
-		if (CacheCollection.get(context.guildId).Users.Trusted.includes(target.id)) return false;
-		if (CacheCollection.get(context.guildId).Users.Trusted.includes(context.member.id))
+		if(target.isOwner) return false;
+		if ((await CacheCollection.getOrFetch(context.guildId)).Users.Trusted.includes(target.id)) return false;
+		if ((await CacheCollection.getOrFetch(context.guildId)).Users.Trusted.includes(context.member.id))
 			return true;
 		if (context.member.isClientOwner) return true;
 		if (context.member.can(Permissions.MANAGE_GUILD) && context.member.canEdit(target))
@@ -216,7 +217,7 @@ export default class MemberWarnCommand extends BaseCommand {
 		warnArgs.target
 			.createMessage({ embeds: [embedDM] })
 			.catch(() => (memberDm = false))
-			.then(() => {
+			.then(async () => {
 				let embedLog = new Embed()
 					.setTitle(`[Warn] ${action} Report:`)
 					.setThumbnail(warnArgs.target.avatarUrl)
@@ -231,7 +232,7 @@ export default class MemberWarnCommand extends BaseCommand {
 						} Usuario avisado: ${memberDm ? DiscordEmojis.CHECK : DiscordEmojis.CHECK_NO}`
 					);
 
-				let serverData = CacheCollection.get(context.guildId);
+				let serverData = await CacheCollection.getOrFetch(context.guildId);
 				const channelId = serverData.Channels.BotLog;
 
 				if (channelId.length && context.guild.channels.has(channelId)) {
@@ -262,7 +263,7 @@ export default class MemberWarnCommand extends BaseCommand {
 		warnArgs.target
 			.createMessage({ embeds: [embedDM] })
 			.catch(() => (memberDm = false))
-			.then(() => {
+			.then(async () => {
 				let embedLog = new Embed()
 					.setTitle(`Warn Result:`)
 					.setThumbnail(warnArgs.target.avatarUrl)
@@ -279,7 +280,7 @@ export default class MemberWarnCommand extends BaseCommand {
 					)
 					.setColor(EmbedColors.MAIN);
 
-				let serverData = CacheCollection.get(context.guildId);
+				let serverData = await CacheCollection.getOrFetch(context.guildId);
 				const channelId = serverData.Channels.ModLog;
 
 				if (channelId.length && context.guild.channels.has(channelId)) {

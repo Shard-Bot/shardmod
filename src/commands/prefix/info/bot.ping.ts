@@ -11,6 +11,7 @@ export default class PingCommand extends BaseCommand {
       aliases: ['latency'],
       metadata: {
         description: 'Obtiene info de la latencia del bot',
+        example: [COMMAND_NAME],
         type: 'info',
       },
       permissionsClient: [Permissions.EMBED_LINKS],
@@ -21,7 +22,7 @@ export default class PingCommand extends BaseCommand {
     const { gateway, rest } = await context.client.ping();
 
     return context.editOrReply({
-      content: `Pong! (gateway: ${gateway}ms) (rest: ${rest}ms)`,
+      content: `Pong!\ngateway: ${gateway}ms\nrest: ${rest}ms`,
       reference: true,
     })
   }

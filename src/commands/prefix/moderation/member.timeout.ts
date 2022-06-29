@@ -31,13 +31,13 @@ export default class MemberTimeoutCommand extends BaseCommand {
 			label: 'user',
 			metadata: {
 				description: 'Aisla a un miembro del servidor durante un tiempo',
-				usage: [`${COMMAND_NAME} <-time> [-force] [-reason]`],
+				usage: '[Miembro] [-time] [-force] [-reason]',
 				example: [
 					`${COMMAND_NAME} fatand#3431 -time 1m`,
 					`${COMMAND_NAME} fatand#3431 -time 10d -reason Insultos`,
 					`${COMMAND_NAME} @someAdminMember -time 1h -force`,
 				],
-				type: 'Moderation',
+				type: 'moderation',
 			},
 			permissionsClient: [Permissions.EMBED_LINKS, Permissions.MANAGE_ROLES],
 		});
@@ -61,12 +61,11 @@ export default class MemberTimeoutCommand extends BaseCommand {
 			return context.editOrReply(
 				`⚠ | No tengo los permisos necesarios para aislar a ${User.tag}`
 			);
-		if (!this.canTimeoutMembers(context, member))
+		if (User.isMe) return context.editOrReply(`⚠ | No puedes aislarme`);
+		if (!(await this.canTimeoutMembers(context, member)))
 			return context.editOrReply(
 				`⚠ | No tienes los permisos necesarios para aislar a ${User.tag}`
 			);
-		if (member.communicationDisabledUntilUnix)
-			return context.editOrReply(`⚠ | El usuario ${User.tag} ya se encuentra aislado`);
 		let reason = args.reason?.length ? args.reason : 'No se dio razón';
 		if (reason.length > 513)
 			return context.editOrReply('⚠ | La razon no puede exeder los 512 caracteres');
@@ -92,10 +91,16 @@ export default class MemberTimeoutCommand extends BaseCommand {
 		if (time > 2419200000)
 			return context.editOrReply(`⚠ | Establece una duracion menor a 28 dias`);
 		let memberDm = true;
+		let askMessage;
+		if(member.communicationDisabledUntilUnix) askMessage = `**Quieres editar el aislamiento de ${member} a ${args.time}?**`;
+		else askMessage = `**Quieres aislar a ${member} durante ${args.time}?**`
 		const confirm = new Confirmation(context, {
-			onAskingMessage: `**Quieres aislar a ${member} durante ${args.time}?**`,
+			onAskingMessage: askMessage,
 			timeout: 10000,
 			onConfirm: async () => {
+				let message;
+				if(member.communicationDisabledUntilUnix) message = `${DiscordEmojis.TIMEOUT} El aislamiento de  \`${User.tag}\` ha sido actualizado a ${args.time}`;
+				else message = `${DiscordEmojis.TIMEOUT} \`${User.tag}\` ha sido aislado temporalmente por ${args.time}`
 				if (args.force) {
 					for (let role of member.roles.toArray()) {
 						if (role.botId) {
@@ -142,32 +147,33 @@ export default class MemberTimeoutCommand extends BaseCommand {
 									});
 						}
 					}
-					timeoutMember({member: member, reason: reason, time: time});
+					timeoutMember({ member: member, reason: reason, time: time });
+					
 					User.createMessage({ embeds: [embedDm] })
 						.catch(() => (memberDm = false))
-						.then(() => {
+						.then(async () => {
 							let embed = new Embed()
 								.setDescription(
-									`${DiscordEmojis.TIMEOUT} \`${User.tag}\` ha sido aislado temporalmente por ${args.time}`
+									message
 								)
 								.setFooter('El usuario fue notificado por DMs')
 								.setColor(EmbedColors.BLANK);
 							context.editOrReply({ embeds: [embed] });
-							this.sendLogEmbed(context, memberDm, args.force, member, args.time, reason);
+							await this.sendLogEmbed(context, memberDm, args.force, member, args.time, reason);
 						});
-				} else {					
-					timeoutMember({member: member, reason: reason, time: time});
+				} else {
+					timeoutMember({ member: member, reason: reason, time: time });
 					await User.createMessage({ embeds: [embedDm] })
 						.catch(() => (memberDm = false))
-						.then(() => {
+						.then(async () => {
 							let embed = new Embed()
 								.setDescription(
-									`${DiscordEmojis.TIMEOUT} \`${User.tag}\` ha sido aislado temporalmente por ${args.time}`
+									message
 								)
 								.setFooter('El usuario fue notificado por DMs')
 								.setColor(EmbedColors.BLANK);
 							context.editOrReply({ embeds: [embed] });
-							this.sendLogEmbed(context, memberDm, args.force, member, args.time, reason);
+							await this.sendLogEmbed(context, memberDm, args.force, member, args.time, reason);
 						});
 				}
 			},
@@ -186,15 +192,16 @@ export default class MemberTimeoutCommand extends BaseCommand {
 		});
 		return confirm.start();
 	}
-	canTimeoutMembers(context: Command.Context, target: Structures.Member) {
+	async canTimeoutMembers(context: Command.Context, target: Structures.Member) {
 		if (target.isClientOwner || config.devsIds.includes(target.id)) return false;
-		if (CacheCollection.get(context.guildId).Users.Trusted.includes(target.id)) return false;
-		if (CacheCollection.get(context.guildId).Users.Trusted.includes(context.member.id)) return true;
+		if ((await CacheCollection.getOrFetch(context.guildId)).Users.Trusted.includes(target.id)) return false;
+		if ((await CacheCollection.getOrFetch(context.guildId)).Users.Trusted.includes(context.member.id))
+			return true;
 		if (context.member.isClientOwner) return true;
 		if (context.member.can(1 << 40) && context.member.canEdit(target)) return true;
 		return false;
 	}
-	sendLogEmbed(
+	async sendLogEmbed(
 		context: Command.Context,
 		memberDm: boolean,
 		force: boolean,
@@ -202,7 +209,7 @@ export default class MemberTimeoutCommand extends BaseCommand {
 		time: string,
 		reason: string
 	) {
-		let serverData = CacheCollection.get(context.guildId);
+		let serverData = await CacheCollection.getOrFetch(context.guildId);
 		const channelId = serverData.Channels.ModLog;
 		if (channelId.length && context.guild.channels.has(channelId)) {
 			const embed = new Embed();

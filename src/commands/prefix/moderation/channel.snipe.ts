@@ -26,9 +26,9 @@ export default class MemberRemoveTimeoutCommand extends BaseCommand {
 			label: 'amount',
 			metadata: {
 				description: 'Muestra un mensaje borrado o editado recientemente en un canal',
-				usage: [`${COMMAND_NAME} [-in] [-edit]`],
+				usage: '[Snipe] [-in] [-edit]',
 				example: [`${COMMAND_NAME} 1 -in #general*`],
-				type: 'Moderation',
+				type: 'moderation',
 			},
 			permissionsClient: [Permissions.EMBED_LINKS],
 			permissions: [Permissions.MANAGE_MESSAGES],
