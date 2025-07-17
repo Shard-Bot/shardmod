@@ -1,6 +1,6 @@
 >El proyecto esta actualmente abandonado, sientase libre de usar el codigo en beneficio propio.
 
-<img width="150" height="150" align="left" style="float: left; margin: 0 10px 0 0;" alt="ShardMod" src="https://media.discordapp.net/attachments/928089027893141514/1212855486656024616/2c876961e597fae696f867707cacefdc.png?ex=65f35ab1&is=65e0e5b1&hm=a5a94dfcf9ad7d1108d70299c56337b12a553f7c3b46c365a2026f045a5f44ee&=&format=webp&quality=lossless&width=480&height=480">
+<img width="150" height="150" align="left" style="float: left; margin: 0 10px 0 0;" alt="ShardMod" src="https://media.discordapp.net/attachments/954509196034973767/1395199313277223087/2c876961e597fae696f867707cacefdc.png?ex=6879941d&is=6878429d&hm=c6165de83742f7bd972f12a245bc0774ad136520f07e63841fcc24442cce451e&=&format=webp&quality=lossless&width=930&height=930">
 
 # Sharding
 ✨ Antiraid - Moderation Discord bot
